@@ -1,14 +1,15 @@
 namespace IdentityServer4.PhoneAuthorizationEndpoint
 {
-    internal class Constants
+    public class Constants
     {
         public class FormParameters
         {
             public const string Transport = "transport";
         }
-        public const string PhoneAuthorizationEndpointName = "Phone";
+        public const string PhoneAuthorizationEndpointName = "phone_endpoint";
+        public const string PhoneAuthorizationEndpointPath = "/connect/phone";
         public const string PhoneFlowEventCategory = "Phone";
-        public const string PhoneFlowGrantType = "phone";
+        public const string PhoneGrantType = "phone";
 
         private const int DeviceFlowEventsStart = 10000;
         public const int PhoneAuthorizationSuccessEventId = DeviceFlowEventsStart + 0;

@@ -86,9 +86,9 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
             //////////////////////////////////////////////////////////
             // check if client allows phone flow
             //////////////////////////////////////////////////////////
-            if (!request.Client.AllowedGrantTypes.Contains(Constants.PhoneFlowGrantType))
+            if (!request.Client.AllowedGrantTypes.Contains(Constants.PhoneGrantType))
             {
-                LogError("Client not configured for phone flow", Constants.PhoneFlowGrantType, request);
+                LogError("Client not configured for phone flow", Constants.PhoneGrantType, request);
                 return Invalid(request, OidcConstants.AuthorizeErrors.UnauthorizedClient);
             }
 

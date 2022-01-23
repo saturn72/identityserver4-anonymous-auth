@@ -9,6 +9,7 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
 using IdentityServer4.PhoneAuthorizationEndpoint.Events;
+using IdentityServer4.PhoneAuthorizationEndpoint.ResponseHandlers;
 
 namespace IdentityServer4.PhoneAuthorizationEndpoint
 {

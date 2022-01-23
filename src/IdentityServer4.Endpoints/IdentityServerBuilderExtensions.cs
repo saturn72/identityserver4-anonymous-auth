@@ -1,4 +1,7 @@
 using IdentityServer4.PhoneAuthorizationEndpoint;
+using IdentityServer4.PhoneAuthorizationEndpoint.ResponseHandlers;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -6,11 +9,21 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IIdentityServerBuilder AddPhoneAuthorization(this IIdentityServerBuilder builder)
         {
+            builder.AddExtensionGrantValidator<PhoneExtensionGrantValidator>();
+            builder.AddEndpoint<PhoneAuthorizationEndpointHandler>(Constants.PhoneAuthorizationEndpointName, EnsureLeadingSlash(Constants.PhoneAuthorizationEndpointPath));
 
-            builder.AddEndpoint<PhoneAuthorizationEndpointHandler>(Constants.PhoneAuthorizationEndpointName, Constants.PhoneAuthorizationEndpointName);
-            builder.Services.AddSingleton<IPhoneAuthorizationRequestValidator, PhoneAuthorizationRequestValidator>();
+            var services = builder.Services;
+            services.AddTransient<IPhoneAuthorizationRequestValidator, PhoneAuthorizationRequestValidator>();
+            services.AddTransient<IPhoneAuthorizationResponseGenerator, PhoneAuthorizationResponseGenerator>();
+
 
             return builder;
+
+            static PathString EnsureLeadingSlash(string path)
+            {
+                if (path != default && !path.StartsWith("/")) path = "/" + path;
+                return path;
+            }
         }
     }
 }
