@@ -1,5 +1,6 @@
 ﻿using IdentityServer4.Extensions;
 using IdentityServer4.Models;
+using IdentityServer4.PhoneAuthorizationEndpoint.Extensions;
 using IdentityServer4.PhoneAuthorizationEndpoint.Services;
 using IdentityServer4.PhoneAuthorizationEndpoint.Validation;
 using IdentityServer4.Services;
