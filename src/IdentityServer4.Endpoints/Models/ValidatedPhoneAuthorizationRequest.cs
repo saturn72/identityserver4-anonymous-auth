@@ -29,5 +29,7 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint.Models
         /// </value>
         public string Description { get; set; }
         public string Transport { get; set; }
+        public string TransportData { get; set; }
+        public string State { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint.Events
 
             }
 
-            Endpoint = Constants.PhoneAuthorizationEndpointName;
+            Endpoint = Constants.EndpointNames.PhoneAuthorization;
             Error = result.Error;
             ErrorDescription = result.ErrorDescription;
         }
@@ -33,7 +33,7 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint.Events
             : base(Constants.PhoneFlowEventCategory,
                 "Phone Authorization Failure",
                 EventTypes.Failure,
-                Constants.PhoneAuthorizationFailureEventId)
+                Constants.Events.PhoneAuthorizationFailureEventId)
         {
         }
 

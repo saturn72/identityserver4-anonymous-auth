@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.PhoneAuthorizationEndpoint.csproj" />
     <ProjectReference Include="..\Host\Host.csproj" />
   </ItemGroup>
 

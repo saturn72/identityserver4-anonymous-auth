@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "tests\Host\Host.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneAuthorizationEndpoint.Tests", "tests\PhoneAuthorizationEndpoint.Tests\PhoneAuthorizationEndpoint.Tests.csproj", "{F5E445A7-3F59-4B10-A305-2689FEE5F530}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityModel.PhoneAuthorizationEndpoint", "IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.PhoneAuthorizationEndpoint.csproj", "{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,5 +9,6 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
         public string VerificationUriComplete { get; set; }
         public int PhoneCodeLifetime { get; set; }
         public int Interval { get; set; }
+        public int Retries { get; set; }
     }
 }

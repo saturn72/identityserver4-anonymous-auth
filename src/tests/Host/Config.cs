@@ -22,15 +22,14 @@ namespace Host
             AllowedGrantTypes = {
                 Constants.PhoneGrantType,
             },
-
-            // secret for authentication
-            ClientSecrets =
-            {
-                new Secret("secret".Sha256())
-            },
+            RequireClientSecret = false,
 
             // scopes that client has access to
-            AllowedScopes = { "api1" }
+            AllowedScopes = { "api1" },
+            Properties =
+            {
+                {"transports", "[{\"name\":\"fcm\"}]" }
+            },
         }
     };
     }

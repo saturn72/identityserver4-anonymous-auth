@@ -10,6 +10,7 @@ using IdentityServer4.PhoneAuthorizationEndpoint.Validation;
 using IdentityModel;
 using System.Collections.Generic;
 using IdentityServer4.PhoneAuthorizationEndpoint.Logging;
+using System.Text.Json;
 
 namespace IdentityServer4.PhoneAuthorizationEndpoint
 {
@@ -21,14 +22,16 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
 
         public PhoneAuthorizationRequestValidator(
             IOptions<PhoneAuthorizationOptions> options,
-            IResourceValidator resourceValidator, 
+            IResourceValidator resourceValidator,
             ILogger<PhoneAuthorizationRequestValidator> logger)
         {
             _options = options.Value;
             _resourceValidator = resourceValidator;
             _logger = logger;
         }
-        public async Task<PhoneAuthorizationRequestValidationResult> ValidateAsync(NameValueCollection parameters, ClientSecretValidationResult clientValidationResult)
+        public async Task<PhoneAuthorizationRequestValidationResult> ValidateAsync(
+            NameValueCollection parameters,
+            ClientSecretValidationResult clientValidationResult)
         {
             _logger.LogDebug("Start phone authorization request validation");
 
@@ -37,10 +40,9 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
                 Raw = parameters ?? throw new ArgumentNullException(nameof(parameters)),
             };
 
-            var transport = parameters[Constants.FormParameters.Transport];
-            if (!transport.HasValue() || !_options.TransportOptions.Contains(transport))
-                return Invalid(request);
-            request.Transport = transport;
+            var requestResult = ValidateRequestParameters(request, clientValidationResult);
+            if (requestResult.IsError)
+                return requestResult;
 
             //validate client
             var clientResult = ValidateClient(request, clientValidationResult);
@@ -55,18 +57,35 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
             }
             _logger.LogDebug("{clientId} Phone request validation success", request.Client.ClientId);
             return Valid(request);
-            throw new System.NotImplementedException();
-        }
-        private PhoneAuthorizationRequestValidationResult Valid(ValidatedPhoneAuthorizationRequest request)
-        {
-            return new PhoneAuthorizationRequestValidationResult(request);
         }
 
-        private PhoneAuthorizationRequestValidationResult Invalid(ValidatedPhoneAuthorizationRequest request, string error = OidcConstants.AuthorizeErrors.InvalidRequest, string description = null)
+        private PhoneAuthorizationRequestValidationResult Valid(ValidatedPhoneAuthorizationRequest request) => new(request);
+
+        private PhoneAuthorizationRequestValidationResult Invalid(
+            ValidatedPhoneAuthorizationRequest request,
+            string error = OidcConstants.AuthorizeErrors.InvalidRequest,
+            string description = null) =>
+            new(request, error, description);
+        private PhoneAuthorizationRequestValidationResult ValidateRequestParameters(
+            ValidatedPhoneAuthorizationRequest request,
+            ClientSecretValidationResult clientValidationResult)
         {
-            return new PhoneAuthorizationRequestValidationResult(request, error, description);
+            var parameters = request.Raw;
+            var transport = parameters[Constants.FormParameters.Transport];
+            if (!transport.HasValue() || !_options.TransportOptions.Contains(transport))
+            {
+                LogError($"Request Properties: missing or unsupportted value for {Constants.FormParameters.Transport}", request);
+                return Invalid(request);
+            }
+            request.Transport = transport;
+            request.TransportData = parameters[Constants.FormParameters.TransportData];
+            request.State = parameters[Constants.FormParameters.State];
+
+            return Valid(request);
         }
-        private PhoneAuthorizationRequestValidationResult ValidateClient(ValidatedPhoneAuthorizationRequest request, ClientSecretValidationResult clientValidationResult)
+        private PhoneAuthorizationRequestValidationResult ValidateClient(
+            ValidatedPhoneAuthorizationRequest request,
+            ClientSecretValidationResult clientValidationResult)
         {
             //////////////////////////////////////////////////////////
             // set client & secret
@@ -90,6 +109,31 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
             {
                 LogError("Client not configured for phone flow", Constants.PhoneGrantType, request);
                 return Invalid(request, OidcConstants.AuthorizeErrors.UnauthorizedClient);
+            }
+
+            //validate transport
+            var transportInfos = request.Client.Properties[Constants.ClientProperties.Transports];
+            if (!transportInfos.HasValue())
+            {
+                LogError($"Client Properties: bad or missing data for {Constants.ClientProperties.Transports}", request);
+                return Invalid(request);
+            }
+
+            JsonElement json = default;
+            try
+            {
+                json = JsonDocument.Parse(transportInfos).RootElement;
+            }
+            catch
+            {
+                LogError($"Client Properties: bad or missing data for {Constants.ClientProperties.Transports}", request);
+                return Invalid(request);
+            }
+            var matchingTransports = json.EnumerateArray().Where(j => j.GetProperty(Constants.ClientProperties.TransportName).GetString().Equals(request.Raw[Constants.FormParameters.Transport], StringComparison.InvariantCultureIgnoreCase));
+            if (matchingTransports.IsNullOrEmpty())
+            {
+                LogError($"Invalid or missing client transports", request);
+                return Invalid(request);
             }
 
             return Valid(request);

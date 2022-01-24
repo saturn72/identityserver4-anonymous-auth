@@ -10,8 +10,6 @@ namespace PhoneAuthorizationEndpoint.Tests.E2E
 {
     public class PhoneJwtE2eTest : IClassFixture<WebApplicationFactory<Startup>>
     {
-        private const string BaseAddress = "http://localhost:5000";
-
         private readonly WebApplicationFactory<Startup> _factory;
         private readonly HttpClient _client;
 
@@ -22,10 +20,20 @@ namespace PhoneAuthorizationEndpoint.Tests.E2E
         }
 
         [Fact]
-        public async Task Test1()
+        public async Task GetJwt()
         {
             var disco = await _client.GetDiscoveryDocumentAsync();
-
+            var address = disco.Json.TryGetString("phone_endpoint");
+            using var pReq = new PhoneAuthorizationRequest
+            {
+                Address = address,
+                ClientId = "mobile-app",
+                Transport ="fcm",
+                TransportData = "fcm-con-id",
+                State = "state",                
+            };
+            var res = await _client.RequestPhoneAuthorizationAsync(pReq);
+            
             throw new NotImplementedException();
         }
     }

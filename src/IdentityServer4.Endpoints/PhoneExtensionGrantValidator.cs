@@ -1,8 +1,10 @@
-﻿using IdentityServer4.Validation;
+﻿using IdentityModel;
+using IdentityServer4.PhoneAuthorizationEndpoint.Services;
+using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace IdentityServer4.PhoneAuthorizationEndpoint
@@ -10,19 +12,19 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
     public class PhoneExtensionGrantValidator : IExtensionGrantValidator
     {
         private readonly ITokenValidator _tokenValidator;
-        private readonly IPhoneCodeService _Phones;
-        private readonly IPhoneCodeValidator _PhoneCodeValidator;
+        private readonly IPhoneCodeService _phoneService;
+        private readonly IPhoneCodeValidator _phoneCodeValidator;
         private readonly ILogger<PhoneExtensionGrantValidator> _logger;
 
         public PhoneExtensionGrantValidator(
             ITokenValidator validator,
-            IPhoneCodeService Phones,
-            IPhoneCodeValidator PhoneCodeValidator,
+            IPhoneCodeService phoneService,
+            IPhoneCodeValidator phoneCodeValidator,
             ILogger<PhoneExtensionGrantValidator> logger)
         {
             _tokenValidator = validator;
-            _Phones = Phones;
-            _PhoneCodeValidator = PhoneCodeValidator;
+            _phoneService = phoneService;
+            _phoneCodeValidator = phoneCodeValidator;
             _logger = logger;
         }
 
@@ -58,10 +60,10 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
             }
 
             var subject = Principal.Create(amr, tokenValidationResult.Claims.ToArray());
-            var PhoneCode = await _Phones.FindByPhoneCodeAsync(code);
+            var PhoneCode = await _phoneService.FindByPhoneCodeAsync(code);
             //validate Phone code
             var PhoneValidRequest = new PhoneCodeValidationRequest(PhoneCode, tokenValidationResult.Client, subject);
-            var PhoneValidResult = await _PhoneCodeValidator.ValidateVerifiedPhoneCodeAsync(PhoneValidRequest);
+            var PhoneValidResult = await _phoneCodeValidator.ValidateVerifiedPhoneCodeAsync(PhoneValidRequest);
             if (PhoneValidResult.IsError)
             {
                 Error(context, "Invalid Phone code");
@@ -84,9 +86,7 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint
         private void Error(ExtensionGrantValidationContext context, string message)
         {
             _logger.LogError(message);
-            context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
+            context.Result = new GrantValidationResult(IdentityServer4.Models.TokenRequestErrors.InvalidGrant);
         }
-    }
-    {
     }
 }

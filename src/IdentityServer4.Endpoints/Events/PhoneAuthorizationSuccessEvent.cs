@@ -16,7 +16,7 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint.Events
         {
             ClientId = request.ValidatedRequest.Client?.ClientId;
             ClientName = request.ValidatedRequest.Client?.ClientName;
-            Endpoint = Constants.PhoneAuthorizationEndpointName;
+            Endpoint = Constants.EndpointNames.PhoneAuthorization;
             Scopes = request.ValidatedRequest.ValidatedResources?.RawScopeValues.ToDelimitedString(" ");
         }
 
@@ -27,7 +27,7 @@ namespace IdentityServer4.PhoneAuthorizationEndpoint.Events
             : base(Constants.PhoneFlowEventCategory,
                 "Phone Authorization Success",
                 EventTypes.Success,
-                Constants.PhoneAuthorizationSuccessEventId)
+                Constants.Events.PhoneAuthorizationSuccessEventId)
         {
         }
 
