@@ -20,7 +20,7 @@ namespace IdentityServer4.Anonnymous.Data
             var query = includeExpiredAndVerified ?
                 AnonnymousCodeScripts.SelectByUserCode :
                 AnonnymousCodeScripts.SelectByUserCodeExcludeExpiredAndVerified;
-            return await GetSingleItem(query, new { User = code });
+            return await GetSingleItem(query, new { UserCode = code });
         }
         public async Task<AnonnymousCodeInfo> FindByVerificationCodeAsync(string code, bool includeExpiredAndVerified)
         {

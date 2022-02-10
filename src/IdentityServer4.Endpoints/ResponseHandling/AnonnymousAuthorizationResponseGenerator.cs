@@ -133,8 +133,8 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
             while (retryCount < userCodeGenerator.RetryLimit)
             {
                 var userCode = await userCodeGenerator.GenerateAsync();
-                var storeMfaCode = await _anonnymousCodeService.FindByUserCodeAsync(userCode);
-                if (storeMfaCode == null)
+                var stored = await _anonnymousCodeService.FindByUserCodeAsync(userCode);
+                if (stored == null)
                     return userCode;
                 retryCount++;
             }

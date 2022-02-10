@@ -20,10 +20,10 @@ namespace IdentityServer4.Anonnymous.Services
             _clock = clock;
             _logger = logger;
         }
-        public async Task<AnonnymousCodeInfo> FindByUserCodeAsync(string verificationCode, bool showExpired = false)
+        public async Task<AnonnymousCodeInfo> FindByUserCodeAsync(string code, bool showExpired = false)
         {
             _logger.LogDebug($"start {nameof(FindByUserCodeAsync)}");
-            var ac = await _codes.FindByUserCodeAsync(verificationCode.Sha256(), showExpired);
+            var ac = await _codes.FindByUserCodeAsync(code.Sha256(), showExpired);
             _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
             return ac;
         }

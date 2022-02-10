@@ -19,9 +19,7 @@ CREATE TABLE [dbo].[AnonnymousCodeInfos](
 	[RetryCounter] int NULL DEFAULT(0),
 	[ReturnUrl] [nvarchar](max) Not NULL,
 	[Transport] [nvarchar](max) NOT NULL,
-	[TransportData] [nvarchar](max) NULL,
-	[TransportProvider] [nvarchar](max) NULL,
-	[UserCode] [nvarchar](max) NULL,
+	[UserCode] [nvarchar](max) NOT NULL,
 	[VerificationCode] [nvarchar](max) NOT NULL,
 	[VerifiedOnUtc] [datetime2](7) NULL,
 	CONSTRAINT [PK_AnonnymousCodeInfos] PRIMARY KEY CLUSTERED 

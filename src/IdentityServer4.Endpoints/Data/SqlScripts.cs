@@ -15,7 +15,7 @@ namespace IdentityServer4.Anonnymous.Data
                 $"[{nameof(AnonnymousCodeDbModel.ClientId)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.Description)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.RequestedScopes)}], " +
-                $"@{nameof(AnonnymousCodeDbModel.ReturnUrl)}, " +
+                $"[{nameof(AnonnymousCodeDbModel.ReturnUrl)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.Transport)}] " +
                 $"FROM [{TableName}]";
 
@@ -53,7 +53,7 @@ namespace IdentityServer4.Anonnymous.Data
                 $"{nameof(AnonnymousCodeDbModel.Lifetime)}, " +
                 $"{nameof(AnonnymousCodeDbModel.RequestedScopes)}, " +
                 $"{nameof(AnonnymousCodeDbModel.ReturnUrl)}, " +
-                $"@{nameof(AnonnymousCodeDbModel.Transport)}, " +
+                $"{nameof(AnonnymousCodeDbModel.Transport)}, " +
                 $"{nameof(AnonnymousCodeDbModel.UserCode)}" +
                 $") VALUES (" +
                 $"@{nameof(AnonnymousCodeDbModel.AllowedRetries)}, " +
