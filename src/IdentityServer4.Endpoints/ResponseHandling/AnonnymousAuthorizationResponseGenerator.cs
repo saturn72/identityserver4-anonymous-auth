@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using IdentityServer4.Anonnymous.Data;
 
 namespace IdentityServer4.Anonnymous.ResponseHandling
 {
@@ -17,7 +18,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
         #region fields
         private readonly IUserCodeService _userCodeService;
         private readonly AnonnymousAuthorizationOptions _options;
-        private readonly IAnonnymousCodeService _anonnymousCodeService;
+        private readonly IAnnonymousCodeStore _codeStore;
         private readonly IEnumerable<ITransport> _transports;
         private readonly ISystemClock _clock;
         private readonly IHandleGenerationService _handleGenerationService;
@@ -28,7 +29,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
         public AnonnymousAuthorizationResponseGenerator(
             IUserCodeService userCodeService,
             IOptions<AnonnymousAuthorizationOptions> options,
-            IAnonnymousCodeService anonnymousCodeService,
+            IAnnonymousCodeStore codeStore,
             IEnumerable<ITransport> transports,
             ISystemClock clock,
             IHandleGenerationService handleGenerationService,
@@ -36,7 +37,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
         {
             _userCodeService = userCodeService;
             _options = options.Value;
-            _anonnymousCodeService = anonnymousCodeService;
+            _codeStore = codeStore;
             _transports = transports;
             _clock = clock;
             _handleGenerationService = handleGenerationService;
@@ -91,7 +92,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
                 VerificationCode = response.VerificationCode,
             };
             _logger.LogDebug($"storing anonnymous-code in database: {ac.ToJsonString()}");
-            _ = _anonnymousCodeService.StoreAnonnymousCodeInfoAsync(response.VerificationCode, ac);
+            _ = _codeStore.StoreAnonnymousCodeInfoAsync(response.VerificationCode, ac);
 
             _logger.LogDebug("Send code via transports");
             var codeContext = new UserCodeTransportContext
@@ -133,7 +134,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
             while (retryCount < userCodeGenerator.RetryLimit)
             {
                 var userCode = await userCodeGenerator.GenerateAsync();
-                var stored = await _anonnymousCodeService.FindByUserCodeAsync(userCode);
+                var stored = await _codeStore.FindByUserCodeAsync(userCode, false);
                 if (stored == null)
                     return userCode;
                 retryCount++;

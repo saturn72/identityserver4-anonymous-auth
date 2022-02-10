@@ -1,5 +1,5 @@
 ﻿using IdentityServer4.Anonnymous.Services;
-using static IdentityServer4.Anonnymous.Data.DapperAnnonymousCodeStore;
+using static IdentityServer4.Anonnymous.Data.DefaultAnnonymousCodeStore;
 
 namespace IdentityServer4.Anonnymous.Data
 {

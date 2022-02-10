@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using IdentityServer4.Anonnymous.Data;
 using System.Data.SqlClient;
 using IdentityServer4.Anonnymous.Endpoints;
+using System.Data;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -26,14 +27,14 @@ namespace Microsoft.Extensions.DependencyInjection
             var services = builder.Services;
             services.AddTransient<IAnonnymousAuthorizationRequestValidator, AnonnymousAuthorizationRequestValidator>();
             services.AddTransient<IAuthorizationResponseGenerator, AnonnymousAuthorizationResponseGenerator>();
-            services.AddTransient<IAnonnymousCodeService, AnonnymousCodeService>();
             services.AddTransient<IAnonnymousCodeValidator, AnonnymousCodeValidator>();
             services.AddSingleton<IUserCodeGenerator>(sp => new DynamicNumericUserCodeGenerator(Defaults.CodeGenetar.NumberOfFigures, Defaults.CodeGenetar.UserCodeType));
             services.AddOptions<AnonnymousAuthorizationOptions>()
                 .Bind(configuration.GetSection(AnonnymousAuthorizationOptions.Section))
                 .Validate(AnonnymousAuthorizationOptions.Validate);
 
-            services.AddScoped<IAnnonymousCodeStore>(sp => new DapperAnnonymousCodeStore(() => new SqlConnection(connectionString)));
+            services.AddScoped<Func<IDbConnection>>(sp => () => new SqlConnection(connectionString));
+            services.AddScoped<IAnnonymousCodeStore, DefaultAnnonymousCodeStore>();
 
             return builder;
         }

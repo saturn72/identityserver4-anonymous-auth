@@ -1,4 +1,5 @@
 ﻿using IdentityModel;
+using IdentityServer4.Anonnymous.Data;
 using IdentityServer4.Anonnymous.Services;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
@@ -12,18 +13,18 @@ namespace IdentityServer4.Anonnymous
     public class AnonnymousExtensionGrantValidator : IExtensionGrantValidator
     {
         private readonly ITokenValidator _tokenValidator;
-        private readonly IAnonnymousCodeService _anonnymousCodeService;
+        private readonly IAnnonymousCodeStore _codeStore;
         private readonly IAnonnymousCodeValidator _anonnymousCodeValidator;
         private readonly ILogger<AnonnymousExtensionGrantValidator> _logger;
 
         public AnonnymousExtensionGrantValidator(
             ITokenValidator validator,
-            IAnonnymousCodeService anonnymousCodeService,
+            IAnnonymousCodeStore codeStore,
             IAnonnymousCodeValidator anonnymousCodeValidator,
             ILogger<AnonnymousExtensionGrantValidator> logger)
         {
             _tokenValidator = validator;
-            _anonnymousCodeService = anonnymousCodeService;
+            _codeStore = codeStore;
             _anonnymousCodeValidator = anonnymousCodeValidator;
             _logger = logger;
         }
@@ -60,7 +61,7 @@ namespace IdentityServer4.Anonnymous
             }
 
             var subject = Principal.Create(amr, tokenValidationResult.Claims.ToArray());
-            var ac = await _anonnymousCodeService.FindByVerificationCodeAsync(code);
+            var ac = await _codeStore.FindByVerificationCodeAsync(code, false);
             //validate Phone code
             var PhoneValidRequest = new AnonnymousCodeValidationRequest(ac, tokenValidationResult.Client, subject);
             var PhoneValidResult = await _anonnymousCodeValidator.ValidateVerifiedPhoneCodeAsync(PhoneValidRequest);

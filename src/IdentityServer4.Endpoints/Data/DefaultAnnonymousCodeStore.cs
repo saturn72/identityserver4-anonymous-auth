@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using IdentityServer4.Anonnymous.Services;
+using IdentityServer4.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
 using System.Threading.Tasks;
@@ -7,32 +9,47 @@ using static IdentityServer4.Anonnymous.Data.SqlScripts;
 
 namespace IdentityServer4.Anonnymous.Data
 {
-    public class DapperAnnonymousCodeStore : IAnnonymousCodeStore
+    public class DefaultAnnonymousCodeStore : IAnnonymousCodeStore
     {
         private readonly Func<IDbConnection> _createDbConnection;
+        private readonly ILogger<DefaultAnnonymousCodeStore> _logger;
 
-        public DapperAnnonymousCodeStore(Func<IDbConnection> createDbConnection)
+        public DefaultAnnonymousCodeStore(
+            Func<IDbConnection> createDbConnection,
+            ILogger<DefaultAnnonymousCodeStore> logger)
         {
             _createDbConnection = createDbConnection;
+            _logger = logger;
         }
         public async Task<AnonnymousCodeInfo> FindByUserCodeAsync(string code, bool includeExpiredAndVerified)
         {
+            _logger.LogDebug($"start {nameof(FindByUserCodeAsync)}");
+            if (!code.HasValue())
+                return null;
             var query = includeExpiredAndVerified ?
                 AnonnymousCodeScripts.SelectByUserCode :
                 AnonnymousCodeScripts.SelectByUserCodeExcludeExpiredAndVerified;
-            return await GetSingleItem(query, new { UserCode = code });
+            var ac = await GetSingleItem(query, new { UserCode = code.Sha256() });
+            _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
+            return ac;
         }
         public async Task<AnonnymousCodeInfo> FindByVerificationCodeAsync(string code, bool includeExpiredAndVerified)
         {
+            _logger.LogDebug($"start {nameof(FindByVerificationCodeAsync)}");
             var query = includeExpiredAndVerified ?
                 AnonnymousCodeScripts.SelectByVeridicationCode :
                 AnonnymousCodeScripts.SelectByVerificationCodeExcludeExpiredAndVerified;
-            return await GetSingleItem(query, new { VerificationCode = code });
+            var ac = await GetSingleItem(query, new { VerificationCode = code.Sha256() });
+            _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
+            return ac;
         }
         public async Task<AnonnymousCodeInfo> FindByVerificationCodeAndUserCodeAsync(string verificationCode, string userCode)
         {
+            _logger.LogDebug($"start {nameof(FindByVerificationCodeAndUserCodeAsync)}");
             var query = AnonnymousCodeScripts.SelectByVerificationAndUserCodeExcludeExpiredAndVerified;
-            return await GetSingleItem(query, new { VerificationCode = verificationCode, UserCode = userCode });
+            var ac = await GetSingleItem(query, new { VerificationCode = verificationCode.Sha256(), UserCode = userCode.Sha256()});
+            _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
+            return ac;
         }
         public async Task<AnonnymousCodeInfo> GetSingleItem(string query, object prms)
         {
@@ -40,17 +57,26 @@ namespace IdentityServer4.Anonnymous.Data
             var model = await con.QuerySingleOrDefaultAsync<AnonnymousCodeDbModel>(query, prms);
             return model == null ? null : FromDbModel(model);
         }
-        public async Task StoreAnonnymousCodeInfoAsync(string anonnymousCode, AnonnymousCodeInfo data)
+        public async Task StoreAnonnymousCodeInfoAsync(string verificationCode, AnonnymousCodeInfo data)
         {
+            _logger.LogInformation($"Start {nameof(StoreAnonnymousCodeInfoAsync)}");
+            if (!verificationCode.HasValue()) throw new ArgumentNullException(nameof(verificationCode));
+            //if (!anonnymouseCode.HasValue()) throw new ArgumentNullException(nameof(anonnymouseCode));
+            if (data == default) throw new ArgumentNullException(nameof(data));
+
+            _logger.LogDebug($"Storing anonnymous code: {data.ToJsonString()}");
+
             var dbModel = ToDbModel(data);
-            dbModel.VerificationCode = anonnymousCode;
+            dbModel.VerificationCode = verificationCode;
             using var con = _createDbConnection();
             await con.ExecuteAsync(AnonnymousCodeScripts.InsertCommand, dbModel);
         }
         public async Task UpdateVerificationRetryAsync(string verificationCode)
         {
+            _logger.LogInformation($"Start {nameof(UpdateVerificationRetryAsync)}");
+            if (!verificationCode.HasValue()) return;
             using var con = _createDbConnection();
-            await con.ExecuteAsync(AnonnymousCodeScripts.UpdateVerificationRetry, new { VerificationCode = verificationCode });
+            await con.ExecuteAsync(AnonnymousCodeScripts.UpdateVerificationRetry, new { VerificationCode = verificationCode.Sha256() });
         }
 
         #region Utilities and nested classes

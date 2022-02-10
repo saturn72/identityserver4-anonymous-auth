@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using IdentityServer4.Anonnymous.Data;
 using IdentityServer4.Anonnymous.Services;
 using IdentityServer4.Anonnymous.UI.Models;
 using IdentityServer4.Configuration;
@@ -14,20 +15,20 @@ namespace IdentityServer4.Anonnymous.UI.Controllers
     [SecurityHeaders]
     public class AnonnymousController : Controller
     {
-        private readonly IAnonnymousCodeService _anonnymousCodeService;
+        private readonly IAnnonymousCodeStore _codeStore;
         //      private readonly IAnonnymousFlowInteractionService _interaction;
         private readonly IEventService _events;
         private readonly IOptions<IdentityServerOptions> _options;
         private readonly ILogger<AnonnymousController> _logger;
 
         public AnonnymousController(
-            IAnonnymousCodeService anonnymousCodeService,
+            IAnnonymousCodeStore codeStore,
             //IAnonnymousFlowInteractionService interaction,
             IEventService eventService,
             IOptions<IdentityServerOptions> options,
             ILogger<AnonnymousController> logger)
         {
-            _anonnymousCodeService = anonnymousCodeService;
+            _codeStore = codeStore;
             //   _interaction = interaction;
             _events = eventService;
             _options = options;
@@ -43,7 +44,7 @@ namespace IdentityServer4.Anonnymous.UI.Controllers
             if (string.IsNullOrWhiteSpace(verificationCode))
                 return View("BadOrMissingDataError");
 
-            var entry = await _anonnymousCodeService.FindByVerificationCodeAsync(verificationCode);
+            var entry = await _codeStore.FindByVerificationCodeAsync(verificationCode, false);
             if (entry == default)
                 return View("BadOrMissingDataError");
 
@@ -114,8 +115,8 @@ namespace IdentityServer4.Anonnymous.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UserCodeCapture(UserCodeCaptureViewModel model)
         {
-            _ = _anonnymousCodeService.UpdateVerificationRetryAsync(model.VerificationCode);
-            var entry = await _anonnymousCodeService.FindByVerificationCodeAndUserCodeAsync(model.VerificationCode, model.UserCode);
+            _ = _codeStore.UpdateVerificationRetryAsync(model.VerificationCode);
+            var entry = await _codeStore.FindByVerificationCodeAndUserCodeAsync(model.VerificationCode, model.UserCode);
             if(entry == default)
                 return View("UserCodeCapture", model);
             throw new NotImplementedException();

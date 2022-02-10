@@ -8,7 +8,7 @@ namespace IdentityServer4.Anonnymous.Data
         Task<AnonnymousCodeInfo> FindByUserCodeAsync(string code, bool returnExpired);
         Task<AnonnymousCodeInfo> FindByVerificationCodeAsync(string code, bool returnExpired);
         Task<AnonnymousCodeInfo> FindByVerificationCodeAndUserCodeAsync(string verificationCode, string userCode);
-        Task StoreAnonnymousCodeInfoAsync(string userCode, AnonnymousCodeInfo data);
+        Task StoreAnonnymousCodeInfoAsync(string verificationCode, AnonnymousCodeInfo data);
         Task UpdateVerificationRetryAsync(string verificationCode);
     }
 }
