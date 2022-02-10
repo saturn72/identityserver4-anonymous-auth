@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityServer4" Version="4.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonnymous.csproj" />
+    <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonnymous.csproj" />
+    <ProjectReference Include="..\..\Providers\Twilio\TwilioProviders.csproj" />
+  </ItemGroup>
+
+</Project>

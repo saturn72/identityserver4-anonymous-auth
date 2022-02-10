@@ -3,15 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.PhoneAuthorizationEndpoint", "IdentityServer4.Endpoints\IdentityServer4.PhoneAuthorizationEndpoint.csproj", "{B598D268-7676-49D7-A742-AA33DCC2B5B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.Anonnymous", "IdentityServer4.Endpoints\IdentityServer4.Anonnymous.csproj", "{B598D268-7676-49D7-A742-AA33DCC2B5B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "tests\Host\Host.csproj", "{DF5458FB-9F00-4941-9134-B9A01430A9A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhoneAuthorizationEndpoint.Tests", "tests\PhoneAuthorizationEndpoint.Tests\PhoneAuthorizationEndpoint.Tests.csproj", "{F5E445A7-3F59-4B10-A305-2689FEE5F530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneAuthorizationEndpoint.Tests", "tests\PhoneAuthorizationEndpoint.Tests\PhoneAuthorizationEndpoint.Tests.csproj", "{F5E445A7-3F59-4B10-A305-2689FEE5F530}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityModel.Anonnymous", "IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonnymous.csproj", "{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityModel.PhoneAuthorizationEndpoint", "IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.PhoneAuthorizationEndpoint.csproj", "{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBackend", "tests\TestBackend\TestBackend.csproj", "{4C7F179D-7420-48B7-9888-99FFDE09E7EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migration", "Migration", "{D0EB8618-AF91-4D12-A42D-4CBCE29757E7}"
+	ProjectSection(SolutionItems) = preProject
+		Migration\UpdateDatabase.sql = Migration\UpdateDatabase.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{53434085-40D9-4DE4-B04E-64DA8B1D7F99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioProviders", "Providers\Twilio\TwilioProviders.csproj", "{A20D19B0-41C1-4920-9980-B744D43C8F4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +32,6 @@ Global
 		{B598D268-7676-49D7-A742-AA33DCC2B5B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B598D268-7676-49D7-A742-AA33DCC2B5B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B598D268-7676-49D7-A742-AA33DCC2B5B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DF5458FB-9F00-4941-9134-B9A01430A9A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF5458FB-9F00-4941-9134-B9A01430A9A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF5458FB-9F00-4941-9134-B9A01430A9A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF5458FB-9F00-4941-9134-B9A01430A9A8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,13 +40,22 @@ Global
 		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C7F179D-7420-48B7-9888-99FFDE09E7EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C7F179D-7420-48B7-9888-99FFDE09E7EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C7F179D-7420-48B7-9888-99FFDE09E7EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C7F179D-7420-48B7-9888-99FFDE09E7EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DF5458FB-9F00-4941-9134-B9A01430A9A8} = {1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530} = {1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}
+		{4C7F179D-7420-48B7-9888-99FFDE09E7EC} = {1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}
+		{A20D19B0-41C1-4920-9980-B744D43C8F4D} = {53434085-40D9-4DE4-B04E-64DA8B1D7F99}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89404D51-2C80-469A-B7BC-131A6DD78ADF}

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Identityserver4" Version="4.1.2" />
+    <PackageReference Include="Twilio" Version="5.70.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonnymous.csproj" />
+  </ItemGroup>
+
+</Project>

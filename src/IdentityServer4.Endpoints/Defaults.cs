@@ -1,4 +1,4 @@
-﻿namespace IdentityServer4.PhoneAuthorizationEndpoint
+﻿namespace IdentityServer4.Anonnymous
 {
     internal sealed class Defaults
     {

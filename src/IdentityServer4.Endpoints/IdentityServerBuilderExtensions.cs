@@ -1,42 +1,49 @@
-using IdentityServer4.PhoneAuthorizationEndpoint;
-using IdentityServer4.PhoneAuthorizationEndpoint.ResponseHandlers;
-using IdentityServer4.PhoneAuthorizationEndpoint.Services;
-using IdentityServer4.PhoneAuthorizationEndpoint.Services.CodeGenerators;
+using IdentityServer4.Anonnymous;
+using IdentityServer4.Anonnymous.ResponseHandling;
+using IdentityServer4.Anonnymous.Services;
+using IdentityServer4.Anonnymous.Services.CodeGenerators;
 using IdentityServer4.Services;
-using Microsoft.AspNetCore.Http;
+using System;
 using Microsoft.Extensions.Configuration;
+using IdentityServer4.Anonnymous.Data;
+using System.Data.SqlClient;
+using IdentityServer4.Anonnymous.Endpoints;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IdentityServerBuilderExtensions
     {
-        public static IIdentityServerBuilder AddPhoneAuthorization(
+        public static IIdentityServerBuilder AddAnonnymousAuthorization(
             this IIdentityServerBuilder builder,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            string connectionString)
         {
-            builder.AddExtensionGrantValidator<PhoneExtensionGrantValidator>();
-            builder.AddEndpoint<PhoneAuthorizationEndpointHandler>(
-                Constants.EndpointNames.PhoneAuthorization,
-                EnsureLeadingSlash(Constants.EndpointPaths.PhoneAuthorization));
+            builder.AddExtensionGrantValidator<AnonnymousExtensionGrantValidator>();
+            builder.AddEndpoint<AnonnymousAuthorizationEndpointHandler>(
+                Constants.EndpointNames.AnonnymousAuthorization,
+                Constants.EndpointPaths.AnonnymousAuthorizationEndpoint.EnsureLeadingSlash());
+
+            builder.AddEndpoint<AnonnymousActivationEndpointHandler>(
+                Constants.EndpointNames.AnonnymousAuthorization,
+                Constants.EndpointPaths.ActivationEndpoint.EnsureLeadingSlash());
+
+            builder.AddEndpoint<AnonnymousVerificationEndpointHandler>(
+                Constants.EndpointNames.AnonnymousAuthorization,
+                Constants.EndpointPaths.VerificationEndpoint.EnsureLeadingSlash());
 
             var services = builder.Services;
-            services.AddTransient<IPhoneAuthorizationRequestValidator, PhoneAuthorizationRequestValidator>();
-            services.AddTransient<IPhoneAuthorizationResponseGenerator, PhoneAuthorizationResponseGenerator>();
-            services.AddTransient<IPhoneCodeService, PhoneCodeService>();
-            services.AddTransient<IPhoneCodeValidator, PhoneCodeValidator>();
+            services.AddTransient<IAnonnymousAuthorizationRequestValidator, AnonnymousAuthorizationRequestValidator>();
+            services.AddTransient<IAuthorizationResponseGenerator, AnonnymousAuthorizationResponseGenerator>();
+            services.AddTransient<IAnonnymousCodeService, AnonnymousCodeService>();
+            services.AddTransient<IAnonnymousCodeValidator, AnonnymousCodeValidator>();
             services.AddSingleton<IUserCodeGenerator>(sp => new DynamicNumericUserCodeGenerator(Defaults.CodeGenetar.NumberOfFigures, Defaults.CodeGenetar.UserCodeType));
-            services.AddOptions<PhoneAuthorizationOptions>()
-                .Bind(configuration.GetSection(PhoneAuthorizationOptions.Section))
-                .Validate(PhoneAuthorizationOptions.Validate);
+            services.AddOptions<AnonnymousAuthorizationOptions>()
+                .Bind(configuration.GetSection(AnonnymousAuthorizationOptions.Section))
+                .Validate(AnonnymousAuthorizationOptions.Validate);
 
+            services.AddScoped<IAnnonymousCodeStore>(sp => new DapperAnnonymousCodeStore(() => new SqlConnection(connectionString)));
 
             return builder;
-
-            static PathString EnsureLeadingSlash(string path)
-            {
-                if (path != default && !path.StartsWith("/")) path = "/" + path;
-                return path;
-            }
         }
     }
 }

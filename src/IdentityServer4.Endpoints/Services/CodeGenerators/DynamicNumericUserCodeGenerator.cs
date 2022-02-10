@@ -3,7 +3,7 @@ using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.PhoneAuthorizationEndpoint.Services.CodeGenerators
+namespace IdentityServer4.Anonnymous.Services.CodeGenerators
 {
     public class DynamicNumericUserCodeGenerator : IUserCodeGenerator
     {
