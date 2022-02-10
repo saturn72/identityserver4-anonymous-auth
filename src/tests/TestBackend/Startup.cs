@@ -19,10 +19,10 @@ namespace TestBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddControllersWithViews();
             _ = services.AddIdentityServer(options =>
             {
-                options.Discovery.CustomEntries.Add(Constants.EndpointNames.AnonnymousAuthorization, $"~{Constants.EndpointPaths.AnonnymousAuthorizationEndpoint}");
+                options.Discovery.CustomEntries.Add(Constants.EndpointNames.AnonnymousAuthorization, $"~{Constants.EndpointPaths.AuthorizationEndpoint}");
             })
                .AddDeveloperSigningCredential()        //This is for dev only scenarios when you don’t have a certificate to use.
                .AddInMemoryApiScopes(Config.ApiScopes)
@@ -45,14 +45,18 @@ namespace TestBackend
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

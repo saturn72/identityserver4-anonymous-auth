@@ -28,8 +28,9 @@ namespace TestBackend
             AllowedScopes = { "api1" },
             Properties =
             {
+                {"lifetime", "600" },
                 {"transports", "[{\"name\":\"sms\", \"provider\":\"main-sms-provider\", \"config\":{\"key\":\"twilio\"}}]" },
-                {"allowed_retries", "2" },
+                {"allowed_retries", "200" },
             },
         }
     };

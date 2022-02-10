@@ -5,6 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using System.Diagnostics;
 
 namespace AnonnymouAuthorizationEndpoint.Tests.E2E
 {
@@ -40,8 +41,11 @@ namespace AnonnymouAuthorizationEndpoint.Tests.E2E
             if (anRes.IsError)
                 throw new Exception("Failed to authorize: " + anRes.ErrorDescription);
 
-            var res = await _client.GetAsync(disco.Issuer + anRes.ActivationUriComplete);
-            if (!res.IsSuccessStatusCode)
+            Process.Start("chrome.exe", disco.Issuer + "/anonnymous?verification_code=" + anRes.VerificationCode);
+            var res1 = await _client.GetAsync(disco.Issuer + "/anonnymous?verification_code=" + anRes.VerificationCode);
+
+            var res2 = await _client.GetAsync(disco.Issuer + anRes.VerificationUriComplete);
+            if (!res2.IsSuccessStatusCode)
                 throw new Exception("Failed to activate");
 
             throw new NotImplementedException();

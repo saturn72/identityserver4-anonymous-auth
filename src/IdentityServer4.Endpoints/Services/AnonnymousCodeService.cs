@@ -20,23 +20,30 @@ namespace IdentityServer4.Anonnymous.Services
             _clock = clock;
             _logger = logger;
         }
-        public async Task<AnonnymousCodeInfo> FindByAnonnymousCodeAsync(string code, bool showExpired = false)
-        {
-            _logger.LogDebug($"start {nameof(FindByAnonnymousCodeAsync)}");
-            var ac = await _codes.FindByAnonnymousCodeAsync(code.Sha256(), showExpired);
-            _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
-            return ac;
-        }
-
-        public async Task<AnonnymousCodeInfo> FindByUserCodeAsync(string userCode, bool showExpired = false)
+        public async Task<AnonnymousCodeInfo> FindByUserCodeAsync(string verificationCode, bool showExpired = false)
         {
             _logger.LogDebug($"start {nameof(FindByUserCodeAsync)}");
-            var ac = await _codes.FindByUserCodeAsync(userCode.Sha256(), showExpired);
+            var ac = await _codes.FindByUserCodeAsync(verificationCode.Sha256(), showExpired);
+            _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
+            return ac;
+        }
+        public async Task<AnonnymousCodeInfo> FindByVerificationCodeAsync(string code, bool showExpired = false)
+        {
+            _logger.LogDebug($"start {nameof(FindByVerificationCodeAsync)}");
+            var ac = await _codes.FindByVerificationCodeAsync(code.Sha256(), showExpired);
             _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
             return ac;
         }
 
-        public Task StoreAnonnymousCodeInfoAsync(string anonnymousCode, AnonnymousCodeInfo data)
+        public async Task<AnonnymousCodeInfo> FindByVerificationCodeAndUserCodeAsync(string verificationCode, string userCode)
+        {
+            _logger.LogDebug($"start {nameof(FindByVerificationCodeAndUserCodeAsync)}");
+            var ac = await _codes.FindByVerificationCodeAndUserCodeAsync(verificationCode.Sha256(), userCode.Sha256());
+            _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
+            return ac;
+        }
+
+        public async Task StoreAnonnymousCodeInfoAsync(string anonnymousCode, AnonnymousCodeInfo data)
         {
             _logger.LogInformation($"Start {nameof(StoreAnonnymousCodeInfoAsync)}");
             if (!anonnymousCode.HasValue()) throw new ArgumentNullException(nameof(anonnymousCode));
@@ -44,24 +51,13 @@ namespace IdentityServer4.Anonnymous.Services
             if (data == default) throw new ArgumentNullException(nameof(data));
 
             _logger.LogDebug($"Storing anonnymous code: {data.ToJsonString()}");
-            return _codes.StoreAnonnymousCodeInfoAsync(anonnymousCode.Sha256(), data);
+            await _codes.StoreAnonnymousCodeInfoAsync(anonnymousCode.Sha256(), data);
         }
-
-        public Task UpdateVerificationApprovedAsync(Guid id, AnonnymousCodeInfo data)
+        public async Task UpdateVerificationRetryAsync(string verificationCode)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateVerificationRetryAsync(Guid id, string provider, string subjectId)
-        {
-            throw new NotImplementedException();
-        }
-        public async Task Activate(Guid id, string code)
-        {
-            _logger.LogInformation($"Start {nameof(Activate)}");
-            if (id == default || !code.HasValue()) return;
-
-            await _codes.Activate(id, code.Sha256());
+            _logger.LogInformation($"Start {nameof(UpdateVerificationRetryAsync)}");
+            if (!verificationCode.HasValue()) return;
+            await _codes.UpdateVerificationRetryAsync(verificationCode.Sha256());
         }
     }
 }

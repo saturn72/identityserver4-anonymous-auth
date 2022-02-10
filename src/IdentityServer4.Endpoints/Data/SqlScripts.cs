@@ -10,72 +10,67 @@ namespace IdentityServer4.Anonnymous.Data
             private static readonly string TableName = $"{nameof(AnonnymousCodeInfo)}s";
             public static readonly string SelectSingleBase = $"SELECT " +
                 $"[{nameof(AnonnymousCodeDbModel.Id)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.ActivatedOnUtc)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.AllowedVerificationRetries)}], " +
+                $"[{nameof(AnonnymousCodeDbModel.AllowedRetries)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.AuthorizedScopes)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.AnonnymousCode)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.ClientId)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.CreatedOnUtc)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.Description)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.IsOpenId)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.Lifetime)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.RequestedScopes)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.ReturnUrl)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.Transport)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.TransportData)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.TransportProvider)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.VerificationRetryCounter)}], " +
-                $"[{nameof(AnonnymousCodeDbModel.VerifiedOnUtc)}] " +
+                $"@{nameof(AnonnymousCodeDbModel.ReturnUrl)}, " +
+                $"[{nameof(AnonnymousCodeDbModel.Transport)}] " +
                 $"FROM [{TableName}]";
 
-            public static readonly string SelectByUserCode = SelectSingleBase + $"WHERE [{nameof(AnonnymousCodeDbModel.UserCode)}] = @{nameof(AnonnymousCodeDbModel.UserCode)}";
+            public static readonly string SelectByUserCode = SelectSingleBase + $" WHERE [{nameof(AnonnymousCodeDbModel.UserCode)}] = @{nameof(AnonnymousCodeDbModel.UserCode)}";
 
-            public static readonly string SelectByUserCodeExcludeExpiredActivatedAndVerified = SelectByUserCode +
+            public static readonly string SelectByUserCodeExcludeExpiredAndVerified = SelectByUserCode +
                 $" AND [{nameof(AnonnymousCodeDbModel.ExpiresOnUtc)}] > SYSUTCDATETIME()" +
                 $" AND [{nameof(AnonnymousCodeDbModel.VerifiedOnUtc)}] IS NULL" +
-                $" AND (([{nameof(AnonnymousCodeDbModel.ActivatedOnUtc)}] IS NULL)" +
-                    $" OR ([{nameof(AnonnymousCodeDbModel.ActivatedOnUtc)}] IS NOT NULL AND [{nameof(AnonnymousCodeDbModel.AllowedVerificationRetries)}] <= [{nameof(AnonnymousCodeDbModel.VerificationRetryCounter)}]))";
+                $" AND [{nameof(AnonnymousCodeDbModel.RetryCounter)}] < [{nameof(AnonnymousCodeDbModel.AllowedRetries)}]";
 
-            public static readonly string SelectByAnonnymousCode = SelectSingleBase + $"WHERE [{nameof(AnonnymousCodeDbModel.AnonnymousCode)}] = @{nameof(AnonnymousCodeDbModel.AnonnymousCode)}";
+            public static readonly string SelectByVerificationCodeAndUserCode =
+                SelectSingleBase + $" WHERE [{nameof(AnonnymousCodeDbModel.UserCode)}] = @{nameof(AnonnymousCodeDbModel.UserCode)}" +
+                $" AND [{nameof(AnonnymousCodeDbModel.VerificationCode)}] = @{nameof(AnonnymousCodeDbModel.VerificationCode)}";
 
-            public static readonly string SelectByAnonnymousCodeExcludeExpiredActivatedAndVerified = SelectByAnonnymousCode +
+            public static readonly string SelectByVerificationAndUserCodeExcludeExpiredAndVerified = SelectByVerificationCodeAndUserCode +
                 $" AND [{nameof(AnonnymousCodeDbModel.ExpiresOnUtc)}] > SYSUTCDATETIME()" +
                 $" AND [{nameof(AnonnymousCodeDbModel.VerifiedOnUtc)}] IS NULL" +
-                $" AND (([{nameof(AnonnymousCodeDbModel.ActivatedOnUtc)}] IS NULL)" +
-                    $" OR ([{nameof(AnonnymousCodeDbModel.ActivatedOnUtc)}] IS NOT NULL AND [{nameof(AnonnymousCodeDbModel.AllowedVerificationRetries)}] <= [{nameof(AnonnymousCodeDbModel.VerificationRetryCounter)}]))";
+                $" AND [{nameof(AnonnymousCodeDbModel.RetryCounter)}] < [{nameof(AnonnymousCodeDbModel.AllowedRetries)}]";
+
+            public static readonly string SelectByVeridicationCode = SelectSingleBase + $"WHERE [{nameof(AnonnymousCodeDbModel.VerificationCode)}] = @{nameof(AnonnymousCodeDbModel.VerificationCode)}";
+
+            public static readonly string SelectByVerificationCodeExcludeExpiredAndVerified = SelectByVeridicationCode +
+                $" AND [{nameof(AnonnymousCodeDbModel.ExpiresOnUtc)}] > SYSUTCDATETIME()" +
+                $" AND [{nameof(AnonnymousCodeDbModel.VerifiedOnUtc)}] IS NULL" +
+                $" AND [{nameof(AnonnymousCodeDbModel.RetryCounter)}] < [{nameof(AnonnymousCodeDbModel.AllowedRetries)}]";
 
 
             public static readonly string InsertCommand = $"INSERT INTO [{TableName}] (" +
+                $"[{nameof(AnonnymousCodeDbModel.AllowedRetries)}], " +
                 $"{nameof(AnonnymousCodeDbModel.AuthorizedScopes)}, " +
-                $"[{nameof(AnonnymousCodeDbModel.AnonnymousCode)}], " +
+                $"[{nameof(AnonnymousCodeDbModel.VerificationCode)}], " +
                 $"{nameof(AnonnymousCodeDbModel.ClientId)}, " +
                 $"{nameof(AnonnymousCodeDbModel.Description)}, " +
                 $"{nameof(AnonnymousCodeDbModel.ExpiresOnUtc)}, " +
-                $"{nameof(AnonnymousCodeDbModel.IsOpenId)}, " +
                 $"{nameof(AnonnymousCodeDbModel.Lifetime)}, " +
                 $"{nameof(AnonnymousCodeDbModel.RequestedScopes)}, " +
                 $"{nameof(AnonnymousCodeDbModel.ReturnUrl)}, " +
-                $"{nameof(AnonnymousCodeDbModel.Transport)}, " +
-                $"{nameof(AnonnymousCodeDbModel.TransportData)}, " +
-                $"{nameof(AnonnymousCodeDbModel.TransportProvider)}" +
+                $"@{nameof(AnonnymousCodeDbModel.Transport)}, " +
+                $"{nameof(AnonnymousCodeDbModel.UserCode)}" +
                 $") VALUES (" +
+                $"@{nameof(AnonnymousCodeDbModel.AllowedRetries)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.AuthorizedScopes)}, " +
-                $"@{nameof(AnonnymousCodeDbModel.AnonnymousCode)}, " +
+                $"@{nameof(AnonnymousCodeDbModel.VerificationCode)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.ClientId)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.Description)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.ExpiresOnUtc)}, " +
-                $"@{nameof(AnonnymousCodeDbModel.IsOpenId)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.Lifetime)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.RequestedScopes)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.ReturnUrl)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.Transport)}, " +
-                $"@{nameof(AnonnymousCodeDbModel.TransportData)}, " +
-                $"@{nameof(AnonnymousCodeDbModel.TransportProvider)})";
+                $"@{nameof(AnonnymousCodeDbModel.UserCode)})";
 
-            public static readonly string Activate = $"UPDATE [{TableName}] SET " +
-                $"[{nameof(AnonnymousCodeDbModel.ActivatedOnUtc)}] = SYSUTCDATETIME(), " +
-                $"[{nameof(AnonnymousCodeDbModel.UserCode)}] = @{nameof(AnonnymousCodeDbModel.UserCode)} " +
-                $"WHERE [{nameof(AnonnymousCodeDbModel.Id)}] = @{nameof(AnonnymousCodeDbModel.Id)}";
+            public static readonly string UpdateVerificationRetry = $"UPDATE [{TableName}] SET " +
+                $"[{nameof(AnonnymousCodeDbModel.RetryCounter)}] = [{nameof(AnonnymousCodeDbModel.RetryCounter)}] + 1 " +
+                $"WHERE [{nameof(AnonnymousCodeDbModel.VerificationCode)}] = @{nameof(AnonnymousCodeDbModel.VerificationCode)}";
         }
     }
 }

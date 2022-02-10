@@ -22,8 +22,8 @@ namespace TwilioProviders
             _options = options.Value;
             _logger = logger;
         }
-        public virtual Func<AnonnymousCodeTransportContext, Task<bool>> ShouldHandle => ctx => Task.FromResult(ctx.Transport == "sms");
-        public virtual Task Transport(AnonnymousCodeTransportContext context)
+        public virtual Func<UserCodeTransportContext, Task<bool>> ShouldHandle => ctx => Task.FromResult(ctx.Transport == "sms");
+        public virtual Task Transport(UserCodeTransportContext context)
         {
             _logger.LogDebug(nameof(Transport));
             if (context == default) throw new ArgumentNullException(nameof(context));

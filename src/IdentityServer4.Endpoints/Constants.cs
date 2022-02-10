@@ -38,9 +38,8 @@ namespace IdentityServer4.Anonnymous
         }
         public sealed class EndpointPaths
         {
-            public const string AnonnymousAuthorizationEndpoint = "/connect/anonnymous";
-            public const string ActivationEndpoint = AnonnymousAuthorizationEndpoint + "/activate";
-            public const string VerificationEndpoint = AnonnymousAuthorizationEndpoint + "/verify";
+            public const string AuthorizationEndpoint = "/connect/anonnymous";
+            public const string VerificationUri = "/anonnymous/verify";
         }
         public const string AnonnymousFlowEventCategory = "Anonnymous";
         public const string AnonnymousGrantType = "anonnymous";
@@ -51,9 +50,10 @@ namespace IdentityServer4.Anonnymous
             public const int AuthorizationSuccessEventId = DeviceFlowEventsStart + 0;
             public const int AuthorizationFailureEventId = DeviceFlowEventsStart + 1;
         }
-        public sealed class IdentityModel
+        public sealed class UserInteraction
         {
-            public const string AnonnymousCode = "anonnymous_code";
+            public const string VerificationCode = "verification_code";
+            public const string UserCode = "user_code";
         }
         public sealed class TransportTypes
         {

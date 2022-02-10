@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migration", "Migration", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{53434085-40D9-4DE4-B04E-64DA8B1D7F99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioProviders", "Providers\Twilio\TwilioProviders.csproj", "{A20D19B0-41C1-4920-9980-B744D43C8F4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwilioProviders", "Providers\Twilio\TwilioProviders.csproj", "{A20D19B0-41C1-4920-9980-B744D43C8F4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

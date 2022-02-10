@@ -3,9 +3,6 @@ using IdentityServer4.Hosting;
 using IdentityServer4.ResponseHandling;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace IdentityServer4.Anonnymous.Endpoints.Results

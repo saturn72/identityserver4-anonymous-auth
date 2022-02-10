@@ -22,11 +22,10 @@ namespace IdentityServer4.Anonnymous.Endpoints.Results
 
             var dto = new
             {
-                anonnymous_code = Response.AnonnymousCode,
-                user_code = Response.UserCode,
-                activation_uri = Response.ActivationUri,
-                activation_uri_complete = Response.ActivationUriComplete,
-                expires_in = Response.AnonnymousCodeLifetime,
+                verification_code = Response.VerificationCode,
+                verification_uri = Response.VerificationUri,
+                verification_uri_complete = Response.VerificationUriComplete,
+                expires_in = Response.Lifetime,
                 interval = Response.Interval
             };
 

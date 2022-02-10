@@ -8,23 +8,21 @@ DROP TABLE IF EXISTS [dbo].[AnonnymousCodeInfos]
 
 CREATE TABLE [dbo].[AnonnymousCodeInfos](
 	[Id] [uniqueidentifier] NOT NULL,
-	[ActivatedOnUtc] [datetime2](7) NULL,
-	[AllowedVerificationRetries] int NULL DEFAULT(0),
-	[AnonnymousCode] [nvarchar](max) NOT NULL,
+	[AllowedRetries] int NOT NULL DEFAULT(0),
 	[AuthorizedScopes] [nvarchar](max) NULL,
 	[ClientId] [nvarchar](max) NOT NULL,
 	[CreatedOnUtc] [datetime2](7) NULL,
 	[Description] [nvarchar](max) NULL,
 	[ExpiresOnUtc] [datetime2](7) NOT NULL,
-	[IsOpenId] [bit] NOT NULL,
 	[Lifetime] [int] NOT NULL, 
 	[RequestedScopes] [nvarchar](max) NULL,
+	[RetryCounter] int NULL DEFAULT(0),
 	[ReturnUrl] [nvarchar](max) Not NULL,
 	[Transport] [nvarchar](max) NOT NULL,
-	[TransportProvider] [nvarchar](max) NULL,
 	[TransportData] [nvarchar](max) NULL,
+	[TransportProvider] [nvarchar](max) NULL,
 	[UserCode] [nvarchar](max) NULL,
-	[VerificationRetryCounter] [int] NULL DEFAULT (0),
+	[VerificationCode] [nvarchar](max) NOT NULL,
 	[VerifiedOnUtc] [datetime2](7) NULL,
 	CONSTRAINT [PK_AnonnymousCodeInfos] PRIMARY KEY CLUSTERED 
 (

@@ -6,7 +6,7 @@ namespace IdentityServer4.Anonnymous.Services
 {
     internal static class AnonnymousCodeTransportExtensions
     {
-        public static Task Transport(this IEnumerable<ITransport> transports, AnonnymousCodeTransportContext context)
+        public static Task Transport(this IEnumerable<ITransport> transports, UserCodeTransportContext context)
         {
             var handlers = new List<(ITransport transport, Task<bool> shouldHandle)>();
             foreach (var t in transports)

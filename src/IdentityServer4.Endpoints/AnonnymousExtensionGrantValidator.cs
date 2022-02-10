@@ -60,7 +60,7 @@ namespace IdentityServer4.Anonnymous
             }
 
             var subject = Principal.Create(amr, tokenValidationResult.Claims.ToArray());
-            var ac = await _anonnymousCodeService.FindByAnonnymousCodeAsync(code);
+            var ac = await _anonnymousCodeService.FindByVerificationCodeAsync(code);
             //validate Phone code
             var PhoneValidRequest = new AnonnymousCodeValidationRequest(ac, tokenValidationResult.Client, subject);
             var PhoneValidResult = await _anonnymousCodeValidator.ValidateVerifiedPhoneCodeAsync(PhoneValidRequest);

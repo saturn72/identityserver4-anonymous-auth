@@ -19,17 +19,9 @@ namespace Microsoft.Extensions.DependencyInjection
             string connectionString)
         {
             builder.AddExtensionGrantValidator<AnonnymousExtensionGrantValidator>();
-            builder.AddEndpoint<AnonnymousAuthorizationEndpointHandler>(
+            builder.AddEndpoint<AnonnymousAuthorizationEndpoint>(
                 Constants.EndpointNames.AnonnymousAuthorization,
-                Constants.EndpointPaths.AnonnymousAuthorizationEndpoint.EnsureLeadingSlash());
-
-            builder.AddEndpoint<AnonnymousActivationEndpointHandler>(
-                Constants.EndpointNames.AnonnymousAuthorization,
-                Constants.EndpointPaths.ActivationEndpoint.EnsureLeadingSlash());
-
-            builder.AddEndpoint<AnonnymousVerificationEndpointHandler>(
-                Constants.EndpointNames.AnonnymousAuthorization,
-                Constants.EndpointPaths.VerificationEndpoint.EnsureLeadingSlash());
+                Constants.EndpointPaths.AuthorizationEndpoint.EnsureLeadingSlash());
 
             var services = builder.Services;
             services.AddTransient<IAnonnymousAuthorizationRequestValidator, AnonnymousAuthorizationRequestValidator>();

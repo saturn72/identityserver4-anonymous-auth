@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace IdentityServer4.Anonnymous.ResponseHandling
 {
@@ -17,6 +18,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
         private readonly IUserCodeService _userCodeService;
         private readonly AnonnymousAuthorizationOptions _options;
         private readonly IAnonnymousCodeService _anonnymousCodeService;
+        private readonly IEnumerable<ITransport> _transports;
         private readonly ISystemClock _clock;
         private readonly IHandleGenerationService _handleGenerationService;
         private readonly ILogger<AnonnymousAuthorizationResponseGenerator> _logger;
@@ -27,6 +29,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
             IUserCodeService userCodeService,
             IOptions<AnonnymousAuthorizationOptions> options,
             IAnonnymousCodeService anonnymousCodeService,
+            IEnumerable<ITransport> transports,
             ISystemClock clock,
             IHandleGenerationService handleGenerationService,
             ILogger<AnonnymousAuthorizationResponseGenerator> logger)
@@ -34,6 +37,7 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
             _userCodeService = userCodeService;
             _options = options.Value;
             _anonnymousCodeService = anonnymousCodeService;
+            _transports = transports;
             _clock = clock;
             _handleGenerationService = handleGenerationService;
             _logger = logger;
@@ -53,36 +57,16 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
             _logger.LogDebug("Creating response for phone authorization request");
             var response = new AuthorizationResponse();
 
-            //// generate user_code
-            //var generator = await _userCodeService.GetGenerator(client.UserCodeType ?? _options.DefaultUserCodeType);
-            //var retryCount = 0;
-            //while (retryCount < generator.RetryLimit)
-            //{
-            //    var sessionCode = await generator.GenerateAsync();
-            //    var storedCode = await _anonnymousCodeService.FindByUserCodeAsync(sessionCode, true);
-            //    if (storedCode == null)
-            //    {
-            //        response.AnonnymousCode = sessionCode;
-            //        break;
-            //    }
-            //    retryCount++;
-            //}
-            //if (!response.UserCode.HasValue())
-            //{
-            //    throw new InvalidOperationException("Unable to create unique phone flow user code");
-            //}
-            _logger.LogDebug($"user code was generated with value: {response.UserCode}");
-
-            var anonnymousCode = await _handleGenerationService.GenerateAsync();
-            _logger.LogDebug($"anonnymous-code was generated valued: {anonnymousCode}");
-            response.AnonnymousCode = anonnymousCode;
+            var verificationCode = await _handleGenerationService.GenerateAsync();
+            _logger.LogDebug($"anonnymous-code was generated valued: {verificationCode}");
+            response.VerificationCode = verificationCode;
             // generate activation URIs
-            response.ActivationUri = _options.ActivationUri;
-            response.ActivationUriComplete = $"{_options.ActivationUri.RemoveTrailingSlash()}?{Constants.IdentityModel.AnonnymousCode}={response.AnonnymousCode}";
+            response.VerificationUri = _options.VerificationUri;
+            response.VerificationUriComplete = $"{_options.VerificationUri.RemoveTrailingSlash()}?{Constants.UserInteraction.VerificationCode}={response.VerificationCode}";
 
             // lifetime
-            response.AnonnymousCodeLifetime = client.TryGetIntPropertyOrDefault(_options.LifetimePropertyName, _options.DefaultInteractionCodeLifetime);
-            _logger.LogDebug($"phone lifetime was set to {response.AnonnymousCodeLifetime}");
+            response.Lifetime = client.TryGetIntPropertyOrDefault(_options.LifetimePropertyName, _options.DefaultCodeLifetime);
+            _logger.LogDebug($"phone lifetime was set to {response.Lifetime}");
 
             // interval
             response.Interval = _options.Interval;
@@ -90,30 +74,71 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
 
             //allowed retries
             var allowedRetries = client.TryGetIntPropertyOrDefault(_options.AllowedRetriesPropertyName, _options.AllowedRetries);
-
-            response.Retries = allowedRetries;
             _logger.LogDebug($"Max allowed retries was set to {allowedRetries}");
 
-
+            var userCode = await GenerateUserCodeAsync(client.UserCodeType ?? _options.DefaultUserCodeType);
             var ac = new AnonnymousCodeInfo
             {
                 AllowedRetries = allowedRetries,
-                AnonnymousCode = response.AnonnymousCode,
                 ClientId = client.ClientId,
                 CreatedOnUtc = _clock.UtcNow.UtcDateTime,
                 Description = validatedRequest.Description,
-                IsOpenId = validatedRequest.IsOpenIdRequest,
-                Lifetime = response.AnonnymousCodeLifetime,
-                Transport = validatedRequest.Transport,
-                TransportProvider = validatedRequest.Provider,
-                TransportData = validatedRequest.TransportData,
+                Lifetime = response.Lifetime,
                 ReturnUrl = validatedRequest.RedirectUrl,
                 RequestedScopes = validatedRequest.RequestedScopes,
-                VerificationUri = validatedRequest.VerificationUri,
+                UserCode = userCode.Sha256(),
+                Transport = validatedRequest.Transport,
+                VerificationCode = response.VerificationCode,
             };
             _logger.LogDebug($"storing anonnymous-code in database: {ac.ToJsonString()}");
-            await _anonnymousCodeService.StoreAnonnymousCodeInfoAsync(response.AnonnymousCode, ac);
+            _ = _anonnymousCodeService.StoreAnonnymousCodeInfoAsync(response.VerificationCode, ac);
+
+            _logger.LogDebug("Send code via transports");
+            var codeContext = new UserCodeTransportContext
+            {
+                Transport = validatedRequest.Transport,
+                Data = validatedRequest.TransportData,
+                Provider = validatedRequest.Provider,
+            };
+            codeContext.Body = await BuildMessageBody(client, userCode, codeContext);
+            _ = _transports.Transport(codeContext);
             return response;
+        }
+        private Task<string> BuildMessageBody(Client client, string code, UserCodeTransportContext ctx)
+        {
+            if (!client.Properties.TryGetValue($"formats:{ctx.Transport}", out var msgFormat))
+            {
+                msgFormat = ctx.Transport switch
+                {
+                    Constants.TransportTypes.Email =>
+                        client.Properties.TryGetValue(_options.DefaultUserCodeEmailFormatPropertyName, out var v) ?
+                            v :
+                            _options.DefaultUserCodeEmailFormat,
+                    Constants.TransportTypes.Sms =>
+                        client.Properties.TryGetValue(_options.DefaultUserCodeSmSFormatPropertyName, out var v) ?
+                            v :
+                            _options.DefaultUserCodeSmsFormat,
+                    _ => throw new InvalidOperationException($"Cannot find message format \'{ctx.Transport}\' for client \'{client.ClientName}\'"),
+                };
+            }
+
+            var body = msgFormat.Replace(Constants.Formats.Fields.UserCode, code);
+            return Task.FromResult(body);
+        }
+        private async Task<string> GenerateUserCodeAsync(string userCodeType)
+        {
+            var userCodeGenerator = await _userCodeService.GetGenerator(userCodeType);
+            var retryCount = 0;
+
+            while (retryCount < userCodeGenerator.RetryLimit)
+            {
+                var userCode = await userCodeGenerator.GenerateAsync();
+                var storeMfaCode = await _anonnymousCodeService.FindByUserCodeAsync(userCode);
+                if (storeMfaCode == null)
+                    return userCode;
+                retryCount++;
+            }
+            throw new InvalidOperationException("Unable to create unique user-code for anonnymous flow");
         }
     }
 

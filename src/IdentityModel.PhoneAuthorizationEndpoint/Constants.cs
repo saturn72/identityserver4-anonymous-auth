@@ -4,11 +4,9 @@
     {
         public sealed class AnonnymousAuthorizationResponse
         {
-            public const string AnonnymousCode = "anonnymous_code";
-            public const string UserCode = "user_code";
+            public const string VerificationCode = "verification_code";
             public const string VerificationUri = "verification_uri";
-            public const string ActivationUri = "activation_uri";
-            public const string ActivationUriComplete = "activation_uri_complete";
+            public const string VerificationUriComplete = "verification_uri_complete";
             public const string ExpiresIn = "expires_in";
             public const string Interval = "interval";
         }

@@ -15,20 +15,20 @@ using IdentityServer4.Anonnymous.Endpoints.Results;
 
 namespace IdentityServer4.Anonnymous.Endpoints
 {
-    public class AnonnymousAuthorizationEndpointHandler : IEndpointHandler
+    public class AnonnymousAuthorizationEndpoint : IEndpointHandler
     {
         private readonly IClientSecretValidator _clientValidator;
         private readonly IAnonnymousAuthorizationRequestValidator _requestValidator;
         private readonly IAuthorizationResponseGenerator _responseGenerator;
         private readonly IEventService _events;
-        private readonly ILogger<AnonnymousAuthorizationEndpointHandler> _logger;
+        private readonly ILogger<AnonnymousAuthorizationEndpoint> _logger;
 
-        public AnonnymousAuthorizationEndpointHandler(
+        public AnonnymousAuthorizationEndpoint(
             IClientSecretValidator clientValidator,
             IAnonnymousAuthorizationRequestValidator requestValidator,
             IAuthorizationResponseGenerator responseGenerator,
             IEventService events,
-            ILogger<AnonnymousAuthorizationEndpointHandler> logger)
+            ILogger<AnonnymousAuthorizationEndpoint> logger)
         {
             _clientValidator = clientValidator;
             _requestValidator = requestValidator;
@@ -38,35 +38,20 @@ namespace IdentityServer4.Anonnymous.Endpoints
         }
         public async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            _logger.LogTrace("Processing phone authorize request.");
+            _logger.LogTrace("Processing anonnymous authorize request.");
 
             // validate HTTP
-            if (!HttpMethods.IsPost(context.Request.Method) ||
-                !context.Request.HasApplicationFormContentType())
+            if (!HttpMethods.IsPost(context.Request.Method) || !context.Request.HasApplicationFormContentType())
             {
-                _logger.LogWarning("Invalid HTTP request for phone authorize endpoint");
+                _logger.LogWarning("Invalid HTTP request for anonnymous authorize endpoint");
                 return Error(OidcConstants.TokenErrors.InvalidRequest);
             }
 
             return await ProcessAuthorizationRequestAsync(context);
         }
-
-        private TokenErrorResult Error(string error, string errorDescription = null, Dictionary<string, object> custom = null)
-        {
-            var response = new TokenErrorResponse
-            {
-                Error = error,
-                ErrorDescription = errorDescription,
-                Custom = custom
-            };
-
-            _logger.LogError("Phone authorization error: {error}:{errorDescriptions}", error, error ?? "-no message-");
-
-            return new TokenErrorResult(response);
-        }
         private async Task<IEndpointResult> ProcessAuthorizationRequestAsync(HttpContext context)
         {
-            _logger.LogDebug("Start phone authorize request.");
+            _logger.LogDebug("Start anonnymous authorize request.");
 
             // validate client
             var clientResult = await _clientValidator.ValidateAsync(context);
@@ -85,14 +70,27 @@ namespace IdentityServer4.Anonnymous.Endpoints
             var baseUrl = context.GetIdentityServerBaseUrl().EnsureTrailingSlash();
 
             // create response
-            _logger.LogTrace("Calling into phone authorize response generator: {type}", _responseGenerator.GetType().FullName);
+            _logger.LogTrace("Calling into anonnymous authorize response generator: {type}", _responseGenerator.GetType().FullName);
             var response = await _responseGenerator.ProcessAsync(requestResult, baseUrl);
 
             await _events.RaiseAsync(new AnonnymousAuthorizationSuccessEvent(response, requestResult));
 
             // return result
-            _logger.LogDebug("Phone authorize request success.");
+            _logger.LogDebug("Anonnymous authorize request success.");
             return new AuthorizationResult(response);
+        }
+        private TokenErrorResult Error(string error, string errorDescription = null, Dictionary<string, object> custom = null)
+        {
+            var response = new TokenErrorResponse
+            {
+                Error = error,
+                ErrorDescription = errorDescription,
+                Custom = custom
+            };
+
+            _logger.LogError("Anonnymous authorization error: {error}:{errorDescriptions}", error, error ?? "-no message-");
+
+            return new TokenErrorResult(response);
         }
     }
 }

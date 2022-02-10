@@ -1,14 +1,14 @@
 ﻿using IdentityServer4.Anonnymous.Services;
-using System;
 using System.Threading.Tasks;
 
 namespace IdentityServer4.Anonnymous.Data
 {
     public interface IAnnonymousCodeStore
     {
-        Task<AnonnymousCodeInfo> FindByUserCodeAsync(string code, bool includeExpiredAndVerified);
-        Task<AnonnymousCodeInfo> FindByAnonnymousCodeAsync(string code, bool returnExpired);
+        Task<AnonnymousCodeInfo> FindByUserCodeAsync(string code, bool returnExpired);
+        Task<AnonnymousCodeInfo> FindByVerificationCodeAsync(string code, bool returnExpired);
+        Task<AnonnymousCodeInfo> FindByVerificationCodeAndUserCodeAsync(string verificationCode, string userCode);
         Task StoreAnonnymousCodeInfoAsync(string userCode, AnonnymousCodeInfo data);
-        Task Activate(Guid id, string userCode);
+        Task UpdateVerificationRetryAsync(string verificationCode);
     }
 }

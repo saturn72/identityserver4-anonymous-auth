@@ -166,6 +166,7 @@ namespace IdentityServer4.Anonnymous
                 return Invalid(request, OidcConstants.AuthorizeErrors.UnauthorizedClient);
             }
             request.RedirectUrl = redirectUri;
+
             request.VerificationUri = _options.VerificationUri;
 
             return Valid(request);
