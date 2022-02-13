@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS [dbo].[AnonnymousCodeInfos]
 CREATE TABLE [dbo].[AnonnymousCodeInfos](
 	[Id] [uniqueidentifier] NOT NULL,
 	[AllowedRetries] int NOT NULL DEFAULT(0),
-	[AuthorizedScopes] [nvarchar](max) NULL,
+	[AuthorizedScopes] [nvarchar](max) NOT NULL,
 	[ClientId] [nvarchar](max) NOT NULL,
 	[CreatedOnUtc] [datetime2](7) NULL,
 	[Description] [nvarchar](max) NULL,

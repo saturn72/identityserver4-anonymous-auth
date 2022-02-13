@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using IdentityServer4.Anonnymous.Data;
+using IdentityServer4.Anonnymous.Stores;
 
 namespace IdentityServer4.Anonnymous.ResponseHandling
 {

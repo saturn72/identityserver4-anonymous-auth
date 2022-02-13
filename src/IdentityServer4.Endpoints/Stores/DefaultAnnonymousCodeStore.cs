@@ -3,11 +3,12 @@ using IdentityServer4.Anonnymous.Services;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using static IdentityServer4.Anonnymous.Data.SqlScripts;
+using static IdentityServer4.Anonnymous.Stores.SqlScripts;
 
-namespace IdentityServer4.Anonnymous.Data
+namespace IdentityServer4.Anonnymous.Stores
 {
     public class DefaultAnnonymousCodeStore : IAnnonymousCodeStore
     {
@@ -67,7 +68,7 @@ namespace IdentityServer4.Anonnymous.Data
             _logger.LogDebug($"Storing anonnymous code: {data.ToJsonString()}");
 
             var dbModel = ToDbModel(data);
-            dbModel.VerificationCode = verificationCode;
+            dbModel.VerificationCode = verificationCode.Sha256();
             using var con = _createDbConnection();
             await con.ExecuteAsync(AnonnymousCodeScripts.InsertCommand, dbModel);
         }
@@ -119,7 +120,6 @@ namespace IdentityServer4.Anonnymous.Data
             Id = model.Id,
             AllowedRetries = model.AllowedRetries,
             VerificationCode = model.VerificationCode,
-            AuthorizedScopes = model.AuthorizedScopes.FromDelimitedString(" "),
             ClientId = model.ClientId,
             CreatedOnUtc = model.CreatedOnUtc,
             Description = model.Description,
@@ -129,6 +129,16 @@ namespace IdentityServer4.Anonnymous.Data
             Transport = model.Transport,
             VerifiedOnUtc = model.VerifiedOnUtc
         };
+
+        public Task<IEnumerable<string>> GetAllSubjectIds()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Authorize(AnonnymousCodeInfo code)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

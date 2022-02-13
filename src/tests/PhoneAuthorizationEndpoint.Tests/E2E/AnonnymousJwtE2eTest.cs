@@ -41,7 +41,7 @@ namespace AnonnymouAuthorizationEndpoint.Tests.E2E
             if (anRes.IsError)
                 throw new Exception("Failed to authorize: " + anRes.ErrorDescription);
 
-            Process.Start("chrome.exe", disco.Issuer + "/anonnymous?verification_code=" + anRes.VerificationCode);
+            Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", "https://localhost:5001/anonnymous?verification_code=" + anRes.VerificationCode);
             var res1 = await _client.GetAsync(disco.Issuer + "/anonnymous?verification_code=" + anRes.VerificationCode);
 
             var res2 = await _client.GetAsync(disco.Issuer + anRes.VerificationUriComplete);

@@ -1,7 +1,7 @@
 ﻿using IdentityServer4.Anonnymous.Services;
-using static IdentityServer4.Anonnymous.Data.DefaultAnnonymousCodeStore;
+using static IdentityServer4.Anonnymous.Stores.DefaultAnnonymousCodeStore;
 
-namespace IdentityServer4.Anonnymous.Data
+namespace IdentityServer4.Anonnymous.Stores
 {
     public sealed class SqlScripts
     {
@@ -35,7 +35,7 @@ namespace IdentityServer4.Anonnymous.Data
                 $" AND [{nameof(AnonnymousCodeDbModel.VerifiedOnUtc)}] IS NULL" +
                 $" AND [{nameof(AnonnymousCodeDbModel.RetryCounter)}] < [{nameof(AnonnymousCodeDbModel.AllowedRetries)}]";
 
-            public static readonly string SelectByVeridicationCode = SelectSingleBase + $"WHERE [{nameof(AnonnymousCodeDbModel.VerificationCode)}] = @{nameof(AnonnymousCodeDbModel.VerificationCode)}";
+            public static readonly string SelectByVeridicationCode = SelectSingleBase + $" WHERE [{nameof(AnonnymousCodeDbModel.VerificationCode)}] = @{nameof(AnonnymousCodeDbModel.VerificationCode)}";
 
             public static readonly string SelectByVerificationCodeExcludeExpiredAndVerified = SelectByVeridicationCode +
                 $" AND [{nameof(AnonnymousCodeDbModel.ExpiresOnUtc)}] > SYSUTCDATETIME()" +
@@ -45,7 +45,6 @@ namespace IdentityServer4.Anonnymous.Data
 
             public static readonly string InsertCommand = $"INSERT INTO [{TableName}] (" +
                 $"[{nameof(AnonnymousCodeDbModel.AllowedRetries)}], " +
-                $"{nameof(AnonnymousCodeDbModel.AuthorizedScopes)}, " +
                 $"[{nameof(AnonnymousCodeDbModel.VerificationCode)}], " +
                 $"{nameof(AnonnymousCodeDbModel.ClientId)}, " +
                 $"{nameof(AnonnymousCodeDbModel.Description)}, " +
@@ -57,7 +56,6 @@ namespace IdentityServer4.Anonnymous.Data
                 $"{nameof(AnonnymousCodeDbModel.UserCode)}" +
                 $") VALUES (" +
                 $"@{nameof(AnonnymousCodeDbModel.AllowedRetries)}, " +
-                $"@{nameof(AnonnymousCodeDbModel.AuthorizedScopes)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.VerificationCode)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.ClientId)}, " +
                 $"@{nameof(AnonnymousCodeDbModel.Description)}, " +

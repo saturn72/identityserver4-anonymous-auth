@@ -1,11 +1,11 @@
 using IdentityServer4.Anonnymous;
 using IdentityServer4.Anonnymous.ResponseHandling;
 using IdentityServer4.Anonnymous.Services;
-using IdentityServer4.Anonnymous.Services.CodeGenerators;
+using IdentityServer4.Anonnymous.Services.Generators;
 using IdentityServer4.Services;
 using System;
 using Microsoft.Extensions.Configuration;
-using IdentityServer4.Anonnymous.Data;
+using IdentityServer4.Anonnymous.Stores;
 using System.Data.SqlClient;
 using IdentityServer4.Anonnymous.Endpoints;
 using System.Data;
@@ -32,10 +32,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddOptions<AnonnymousAuthorizationOptions>()
                 .Bind(configuration.GetSection(AnonnymousAuthorizationOptions.Section))
                 .Validate(AnonnymousAuthorizationOptions.Validate);
-
             services.AddScoped<Func<IDbConnection>>(sp => () => new SqlConnection(connectionString));
             services.AddScoped<IAnnonymousCodeStore, DefaultAnnonymousCodeStore>();
 
+            services.AddScoped<IRandomStringGenerator, DefaultRandomStringGenerator>();
+            services.AddScoped<IAnonnymousFlowInteractionService, DefaltAnonnymousFlowInteractionService>();
             return builder;
         }
     }

@@ -1,5 +1,5 @@
 ﻿using IdentityModel;
-using IdentityServer4.Anonnymous.Data;
+using IdentityServer4.Anonnymous.Stores;
 using IdentityServer4.Anonnymous.Services;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;

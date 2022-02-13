@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace IdentityServer4.Anonnymous.Services
 {
@@ -15,6 +16,8 @@ namespace IdentityServer4.Anonnymous.Services
         public IEnumerable<string> RequestedScopes { get; set; }
         public int RetryCounter { get; set; }
         public string ReturnUrl { get; set; }
+        public string SessionId { get; set; }
+        public string SubjectId { get; set; }
         public string Transport { get; set; }
         public string UserCode { get; set; }
         public DateTime? VerifiedOnUtc { get; set; }

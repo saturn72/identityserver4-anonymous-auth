@@ -2,6 +2,9 @@ namespace IdentityServer4.Anonnymous
 {
     public class Constants
     {
+        public const string AnonnymousFlowEventCategory = "Anonnymous";
+        public const string AnonnymousGrantType = "anonnymous";
+        public const string AnonnymousAuthenticationType = "anonnymous";
         public class FormParameters
         {
             public const string Transport = "transport";
@@ -41,14 +44,16 @@ namespace IdentityServer4.Anonnymous
             public const string AuthorizationEndpoint = "/connect/anonnymous";
             public const string VerificationUri = "/anonnymous/verify";
         }
-        public const string AnonnymousFlowEventCategory = "Anonnymous";
-        public const string AnonnymousGrantType = "anonnymous";
 
         public sealed class Events
         {
-            private const int DeviceFlowEventsStart = 10000;
-            public const int AuthorizationSuccessEventId = DeviceFlowEventsStart + 0;
-            public const int AuthorizationFailureEventId = DeviceFlowEventsStart + 1;
+            private const int AnonnymousEventsStart = 10000;
+            public const int AuthorizationSuccessEventId = AnonnymousEventsStart + 0;
+            public const int AuthorizationFailureEventId = AnonnymousEventsStart + 1;
+            public const string GrantSuccessEventName = "anonnymous-grant-success";
+            public const int GrantSuccessEventId = AnonnymousEventsStart + 10;
+            public const string GrantFailedEventName = "anonnymous-grant-failed";
+            public const int GrantFailedEventId = AnonnymousEventsStart + 11;
         }
         public sealed class UserInteraction
         {
