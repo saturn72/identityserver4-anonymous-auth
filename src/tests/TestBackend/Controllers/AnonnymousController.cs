@@ -56,7 +56,7 @@ namespace IdentityServer4.Anonnymous.UI.Controllers
                 return View("UserCodeCapture", model);
 
             model.UserCode = userCode;
-            return await ValicateUserCodeCaptureModel(model);
+            return await ValidateUserCodeCaptureModel(model);
         }
 
         [HttpPost]
@@ -66,9 +66,9 @@ namespace IdentityServer4.Anonnymous.UI.Controllers
             if (!ModelState.IsValid)
                 return View("Error");
 
-            return await ValicateUserCodeCaptureModel(model);
+            return await ValidateUserCodeCaptureModel(model);
         }
-        private async Task<IActionResult> ValicateUserCodeCaptureModel(UserCodeCaptureViewModel model)
+        private async Task<IActionResult> ValidateUserCodeCaptureModel(UserCodeCaptureViewModel model)
         {
             _ = _codeStore.UpdateVerificationRetryAsync(model.VerificationCode);
             var entry = await _codeStore.FindByVerificationCodeAndUserCodeAsync(model.VerificationCode, model.UserCode);

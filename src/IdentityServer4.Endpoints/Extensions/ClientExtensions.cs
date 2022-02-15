@@ -30,8 +30,9 @@ namespace IdentityServer4.Models
         private static bool ValidateParametersAndVaraibles(Client client, string propertyName, out string value)
         {
             value = "";
-            var res = propertyName.HasValue() &&
+            var res =
             client?.Properties?.Any() == true &&
+            propertyName.HasValue() &&
             client.Properties.TryGetValue(propertyName, out value) &&
             value.HasValue();
             return res;

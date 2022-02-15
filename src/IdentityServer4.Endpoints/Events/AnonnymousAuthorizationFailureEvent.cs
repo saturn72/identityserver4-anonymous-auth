@@ -13,17 +13,16 @@ namespace IdentityServer4.Anonnymous.Events
         public AnonnymousAuthorizationFailureEvent(AuthorizationRequestValidationResult result)
             : this()
         {
-            if (result.ValidatedRequest != null)
+            if (result?.ValidatedRequest != null)
             {
                 ClientId = result.ValidatedRequest.Client?.ClientId;
                 ClientName = result.ValidatedRequest.Client?.ClientName;
                 Scopes = result.ValidatedRequest.RequestedScopes?.ToDelimitedString(" ");
-
             }
 
             Endpoint = Constants.EndpointNames.AnonnymousAuthorization;
-            Error = result.Error;
-            ErrorDescription = result.ErrorDescription;
+            Error = result?.Error;
+            ErrorDescription = result?.ErrorDescription;
         }
 
         /// <summary>
@@ -31,7 +30,7 @@ namespace IdentityServer4.Anonnymous.Events
         /// </summary>
         public AnonnymousAuthorizationFailureEvent()
             : base(Constants.AnonnymousFlowEventCategory,
-                "Phone Authorization Failure",
+                "Anonnymous Authorization Failure",
                 EventTypes.Failure,
                 Constants.Events.AuthorizationFailureEventId)
         {

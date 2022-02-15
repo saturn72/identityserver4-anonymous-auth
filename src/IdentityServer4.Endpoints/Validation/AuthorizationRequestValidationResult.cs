@@ -12,7 +12,6 @@ namespace IdentityServer4.Anonnymous.Validation
         public AuthorizationRequestValidationResult(ValidatedAnonnymousAuthorizationRequest request)
         {
             IsError = false;
-
             ValidatedRequest = request;
         }
 

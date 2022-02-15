@@ -7,7 +7,7 @@ using IdentityServer4.Anonnymous.ResponseHandling;
 
 namespace IdentityServer4.Anonnymous.Endpoints.Results
 {
-    internal class AuthorizationResult : IEndpointResult
+    public class AuthorizationResult : IEndpointResult
     {
         public AuthorizationResponse Response { get; }
 

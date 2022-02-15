@@ -1,9 +1,15 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
 
 namespace System
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
+        public static bool HasValue(this string source)
+            => !string.IsNullOrEmpty(source) && !string.IsNullOrWhiteSpace(source);
+
         public static bool TryParseAsJsonDocument(this string json, out JsonDocument value)
         {
             value = default;
@@ -33,50 +39,38 @@ namespace System
             }
             return false;
         }
-        public static bool IsLocalUrl(this string url)
+        public static IEnumerable<string> FromDelimitedString(this string input, string delimiter)
         {
-            if (string.IsNullOrEmpty(url))
+            if (input == default)
+                return default;
+            if (!delimiter.HasValue())
+                return new[] { input };
+
+            input = input.Trim();
+            return input.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).ToList();
+        }
+
+        public static string ToDelimitedString(this IEnumerable<string> source, string delimiter = "")
+        {
+            if (source == null)
+                return null;
+
+            if (delimiter == null) delimiter = string.Empty;
+
+            var len = source.Count();
+            if (len == 0)
+                return string.Empty;
+
+            var sb = new StringBuilder(100);
+            var i = 0;
+            while (i < len - 1)
             {
-                return false;
+                sb.Append(source.ElementAt(i) + delimiter);
+                i++;
             }
+            sb.Append(source.ElementAt(i));
 
-            // Allows "/" or "/foo" but not "//" or "/\".
-            if (url[0] == '/')
-            {
-                // url is exactly "/"
-                if (url.Length == 1)
-                {
-                    return true;
-                }
-
-                // url doesn't start with "//" or "/\"
-                if (url[1] != '/' && url[1] != '\\')
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            // Allows "~/" or "~/foo" but not "~//" or "~/\".
-            if (url[0] == '~' && url.Length > 1 && url[1] == '/')
-            {
-                // url is exactly "~/"
-                if (url.Length == 2)
-                {
-                    return true;
-                }
-
-                // url doesn't start with "~//" or "~/\"
-                if (url[2] != '/' && url[2] != '\\')
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            return false;
+            return sb.ToString();
         }
     }
 }

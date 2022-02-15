@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace IdentityServer4.Anonnymous.Endpoints.Results
 {
-    internal class TokenErrorResult : IEndpointResult
+    public class TokenErrorResult : IEndpointResult
     {
         public TokenErrorResponse Response { get; }
 
         public TokenErrorResult(TokenErrorResponse error)
         {
-            if (string.IsNullOrWhiteSpace(error.Error))
+            if (error == default || !error.Error.HasValue())
                 throw new ArgumentNullException(nameof(error.Error), "Error must be set");
 
             Response = error;

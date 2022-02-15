@@ -55,16 +55,16 @@ namespace IdentityServer4.Anonnymous.Endpoints
 
             // validate client
             var clientResult = await _clientValidator.ValidateAsync(context);
-            if (clientResult.Client == null) return Error(OidcConstants.TokenErrors.InvalidClient);
+            if (clientResult?.Client == default || clientResult.IsError) return Error(OidcConstants.TokenErrors.InvalidClient);
 
             // validate request
             var form = (await context.Request.ReadFormAsync()).AsNameValueCollection();
             var requestResult = await _requestValidator.ValidateAsync(form, clientResult);
 
-            if (requestResult.IsError)
+            if (requestResult == default || requestResult.IsError)
             {
                 await _events.RaiseAsync(new AnonnymousAuthorizationFailureEvent(requestResult));
-                return Error(requestResult.Error, requestResult.ErrorDescription);
+                return Error(requestResult?.Error, requestResult?.ErrorDescription);
             }
 
             var baseUrl = context.GetIdentityServerBaseUrl().EnsureTrailingSlash();

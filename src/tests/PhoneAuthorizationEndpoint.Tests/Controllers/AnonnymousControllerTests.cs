@@ -137,7 +137,8 @@ namespace PhoneAuthorizationEndpoint.Tests.Controllers
                    .ReturnsAsync(entry);
 
             var ev = new Mock<IEventService>();
-            var ctrl = new AnonnymousController(cs.Object, null, ev.Object, l.Object)
+            var inter= new Mock<IAnonnymousFlowInteractionService>();
+            var ctrl = new AnonnymousController(cs.Object, inter.Object, ev.Object, l.Object)
             {
                 ControllerContext = new ControllerContext
                 {
@@ -148,35 +149,39 @@ namespace PhoneAuthorizationEndpoint.Tests.Controllers
             res.ShouldBeOfType<ViewResult>().ViewName.ShouldBe("Error");
             ev.Verify(e => e.RaiseAsync(It.IsAny<AnonnymousGrantFailedEvent>()), Times.Once);
         }
-
-        /*
-         [HttpGet]
-        public async Task<IActionResult> Index()
+        [Fact]
+        public async Task Index_ReturnsSuccess()
         {
-            _logger.LogDebug($"Start {nameof(Index)}");
-            var verificationCode = Request.Query[Constants.UserInteraction.VerificationCode];
+            var l = new Mock<ILogger<AnonnymousController>>();
+            var d = new Dictionary<string, StringValues> {
+                { "verification_code", "vc" },
+                { "user_code", "uc" },
+            };
+            var ctx = new DefaultHttpContext();
+            ctx.Request.Query = new QueryCollection(d);
 
-            if (string.IsNullOrWhiteSpace(verificationCode))
-                return View("BadOrMissingDataError");
+            var entry = new AnonnymousCodeInfo();
+            var cs = new Mock<IAnnonymousCodeStore>();
+            cs.Setup(c => c.FindByVerificationCodeAsync(It.IsAny<string>(), It.IsAny<bool>()))
+                   .ReturnsAsync(entry);
+            cs.Setup(c => c.FindByVerificationCodeAndUserCodeAsync(It.IsAny<string>(), It.IsAny<string>()))
+                   .ReturnsAsync(entry);
 
-            var entry = await _codeStore.FindByVerificationCodeAsync(verificationCode, false);
-            if (entry == default)
-                return View("BadOrMissingDataError");
-
-
-            var userCode = Request.Query[Constants.UserInteraction.UserCode];
-            if (string.IsNullOrWhiteSpace(userCode))
+            var ev = new Mock<IEventService>();
+            var inter = new Mock<IAnonnymousFlowInteractionService>();
+            
+            inter.Setup(i => i.HandleRequestAsync(It.IsAny<AnonnymousCodeInfo>()))
+                   .ReturnsAsync(new AnonnymousInteractionResult());
+            var ctrl = new AnonnymousController(cs.Object, inter.Object, ev.Object, l.Object)
             {
-                var model = new UserCodeCaptureViewModel
+                ControllerContext = new ControllerContext
                 {
-                    Transport = entry.Transport,
-                    VerificationCode = verificationCode,
-                };
-                return View("UserCodeCapture", model);
-            }
-
-            return View("Error");
+                    HttpContext = ctx
+                }
+            };
+            var res = await ctrl.Index();
+            res.ShouldBeOfType<ViewResult>().ViewName.ShouldBe("Success");
+            ev.Verify(e => e.RaiseAsync(It.IsAny<AnonnymousGrantedEvent>()), Times.Once);
         }
-        */
     }
 }

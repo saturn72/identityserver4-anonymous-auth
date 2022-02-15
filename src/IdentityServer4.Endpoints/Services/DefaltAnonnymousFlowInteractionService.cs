@@ -38,11 +38,12 @@ namespace IdentityServer4.Anonnymous.Services
 
         public async Task<AnonnymousInteractionResult> HandleRequestAsync(AnonnymousCodeInfo code)
         {
-            if (code == default) throw new ArgumentNullException(nameof(code));
+            if (code == default)
+                return LogAndReturnError("Invalid request", $"Anonnymous authorization failure - {nameof(code)} is missing");
 
             var client = await _clients.FindClientByIdAsync(code.ClientId);
             if (client == default)
-                return LogAndReturnError("Invalid client", "Anonnymous authorization failure - requesting client is invalid");
+                return LogAndReturnError("Invalid client", "Anonnymous authorization failure - requested client is invalid");
 
             await CreateSubject(code, client);
 

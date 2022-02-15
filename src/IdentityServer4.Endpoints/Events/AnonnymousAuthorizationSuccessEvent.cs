@@ -12,13 +12,17 @@ namespace IdentityServer4.Anonnymous.Events
         /// </summary>
         /// <param name="response">The response.</param>
         /// <param name="request">The request.</param>
-        public AnonnymousAuthorizationSuccessEvent(AuthorizationResponse response, AuthorizationRequestValidationResult request)
+        public AnonnymousAuthorizationSuccessEvent(
+            AuthorizationResponse response, 
+            AuthorizationRequestValidationResult request)
             : this()
         {
-            ClientId = request.ValidatedRequest.Client?.ClientId;
-            ClientName = request.ValidatedRequest.Client?.ClientName;
+            Response = response;
+            var vr = request.ValidatedRequest;
+            ClientId = vr?.Client?.ClientId;
+            ClientName = vr?.Client?.ClientName;
             Endpoint = Constants.EndpointNames.AnonnymousAuthorization;
-            Scopes = request.ValidatedRequest.ValidatedResources?.RawScopeValues.ToDelimitedString(" ");
+            Scopes = vr?.ValidatedResources?.RawScopeValues.ToDelimitedString(" ");
         }
 
         /// <summary>
@@ -64,5 +68,6 @@ namespace IdentityServer4.Anonnymous.Events
         /// The scopes.
         /// </value>
         public string Scopes { get; set; }
+        public AuthorizationResponse Response { get; }
     }
 }
