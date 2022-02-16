@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonnymous.Services
+namespace IdentityServer4.Anonnymous.Transport
 {
-    public interface ITransport
+    public interface ITransporter
     {
         Func<UserCodeTransportContext, Task<bool>> ShouldHandle { get; }
         Task Transport(UserCodeTransportContext context);

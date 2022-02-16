@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.Extensions;
 using IdentityServer4.Models;
-using IdentityServer4.Anonnymous.Services;
 using IdentityServer4.Anonnymous.Validation;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -10,33 +9,34 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using IdentityServer4.Anonnymous.Stores;
+using IdentityServer4.Anonnymous.Transport;
 
-namespace IdentityServer4.Anonnymous.ResponseHandling
+namespace IdentityServer4.Anonnymous.Services.Generators
 {
-    public class AnonnymousAuthorizationResponseGenerator : IAuthorizationResponseGenerator
+    public class AuthorizationResponseGenerator : IAuthorizationResponseGenerator
     {
         #region fields
         private readonly IUserCodeService _userCodeService;
         private readonly AnonnymousAuthorizationOptions _options;
         private readonly IAnnonymousCodeStore _codeStore;
-        private readonly IEnumerable<ITransport> _transports;
+        private readonly IEnumerable<ITransporter> _transports;
         private readonly ISystemClock _clock;
         private readonly IHandleGenerationService _handleGenerationService;
-        private readonly ILogger<AnonnymousAuthorizationResponseGenerator> _logger;
+        private readonly ILogger<AuthorizationResponseGenerator> _logger;
         #endregion
 
         #region ctor
-        public AnonnymousAuthorizationResponseGenerator(
+        public AuthorizationResponseGenerator(
             IUserCodeService userCodeService,
             IOptions<AnonnymousAuthorizationOptions> options,
             IAnnonymousCodeStore codeStore,
-            IEnumerable<ITransport> transports,
+            IEnumerable<ITransporter> transports,
             ISystemClock clock,
             IHandleGenerationService handleGenerationService,
-            ILogger<AnonnymousAuthorizationResponseGenerator> logger)
+            ILogger<AuthorizationResponseGenerator> logger)
         {
             _userCodeService = userCodeService;
-            _options = options.Value;
+            _options = options?.Value;
             _codeStore = codeStore;
             _transports = transports;
             _clock = clock;
@@ -45,17 +45,17 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
 
         }
         #endregion
-        public async Task<AuthorizationResponse> ProcessAsync(AuthorizationRequestValidationResult validationResult, string baseUrl)
+        public async Task<AuthorizationResponse> ProcessAsync(
+            AuthorizationRequestValidationResult validationResult)
         {
             _logger.LogInformation("start Processing anonnymous request");
             if (validationResult == null) throw new ArgumentNullException(nameof(validationResult));
-            if (!baseUrl.HasValue()) throw new ArgumentException("Value cannot be null or whitespace.", nameof(baseUrl));
 
             var validatedRequest = validationResult.ValidatedRequest;
             var client = validatedRequest?.Client;
             if (client == null) throw new ArgumentNullException(nameof(validationResult.ValidatedRequest.Client));
 
-            _logger.LogDebug("Creating response for phone authorization request");
+            _logger.LogDebug("Creating response for anonnymous authorization request");
             var response = new AuthorizationResponse();
 
             var verificationCode = await _handleGenerationService.GenerateAsync();
@@ -66,12 +66,12 @@ namespace IdentityServer4.Anonnymous.ResponseHandling
             response.VerificationUriComplete = $"{_options.VerificationUri.RemoveTrailingSlash()}?{Constants.UserInteraction.VerificationCode}={response.VerificationCode}";
 
             // lifetime
-            response.Lifetime = client.TryGetIntPropertyOrDefault(_options.LifetimePropertyName, _options.DefaultCodeLifetime);
-            _logger.LogDebug($"phone lifetime was set to {response.Lifetime}");
+            response.Lifetime = client.TryGetIntPropertyOrDefault(_options.LifetimePropertyName, _options.DefaultLifetime);
+            _logger.LogDebug($"anonnymous lifetime was set to {response.Lifetime}");
 
             // interval
             response.Interval = _options.Interval;
-            _logger.LogDebug($"phone interval was set to {response.Interval}");
+            _logger.LogDebug($"anonnymous interval was set to {response.Interval}");
 
             //allowed retries
             var allowedRetries = client.TryGetIntPropertyOrDefault(_options.AllowedRetriesPropertyName, _options.AllowedRetries);

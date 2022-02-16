@@ -11,12 +11,10 @@ namespace AnonnymouAuthorizationEndpoint.Tests.E2E
 {
     public class AnonnymousJwtE2eTest : IClassFixture<WebApplicationFactory<Startup>>
     {
-        private readonly WebApplicationFactory<Startup> _factory;
         private readonly HttpClient _client;
 
         public AnonnymousJwtE2eTest(WebApplicationFactory<Startup> factory)
         {
-            _factory = factory;
             _client = factory.CreateClient();
         }
 

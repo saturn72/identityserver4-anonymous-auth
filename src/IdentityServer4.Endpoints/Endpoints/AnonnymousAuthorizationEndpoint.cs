@@ -9,9 +9,9 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
 using IdentityServer4.Anonnymous.Events;
-using IdentityServer4.Anonnymous.ResponseHandling;
 using System;
 using IdentityServer4.Anonnymous.Endpoints.Results;
+using IdentityServer4.Anonnymous.Services.Generators;
 
 namespace IdentityServer4.Anonnymous.Endpoints
 {
@@ -67,11 +67,9 @@ namespace IdentityServer4.Anonnymous.Endpoints
                 return Error(requestResult?.Error, requestResult?.ErrorDescription);
             }
 
-            var baseUrl = context.GetIdentityServerBaseUrl().EnsureTrailingSlash();
-
             // create response
             _logger.LogTrace("Calling into anonnymous authorize response generator: {type}", _responseGenerator.GetType().FullName);
-            var response = await _responseGenerator.ProcessAsync(requestResult, baseUrl);
+            var response = await _responseGenerator.ProcessAsync(requestResult);
 
             await _events.RaiseAsync(new AnonnymousAuthorizationSuccessEvent(response, requestResult));
 

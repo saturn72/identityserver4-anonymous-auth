@@ -8,7 +8,7 @@ namespace IdentityServer4.Anonnymous.Services.Generators
 {
     public class DefaultRandomStringGenerator : IRandomStringGenerator
     {
-        private static Random Random = new();
+        private static readonly Random Random = new();
         public Task<string> Genetare(int length)
         {
             var lengths = new[] { length / 2, 1, length / 2 };

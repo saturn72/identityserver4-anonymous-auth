@@ -8,7 +8,7 @@ namespace IdentityServer4.Anonnymous.Stores
         public sealed class AnonnymousCodeScripts
         {
             private static readonly string TableName = $"{nameof(AnonnymousCodeInfo)}s";
-            public static readonly string SelectSingleBase = $"SELECT " +
+            private static readonly string SelectSingleBase = $"SELECT " +
                 $"[{nameof(AnonnymousCodeDbModel.Id)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.AllowedRetries)}], " +
                 $"[{nameof(AnonnymousCodeDbModel.AuthorizedScopes)}], " +

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using System;
-using IdentityServer4.Anonnymous.ResponseHandling;
+using IdentityServer4.Anonnymous.Services.Generators;
 
 namespace IdentityServer4.Anonnymous.Endpoints.Results
 {

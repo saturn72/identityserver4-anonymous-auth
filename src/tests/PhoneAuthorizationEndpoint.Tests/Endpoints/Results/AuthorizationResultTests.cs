@@ -1,13 +1,9 @@
 ﻿using IdentityServer4.Anonnymous.Endpoints.Results;
-using IdentityServer4.Anonnymous.ResponseHandling;
-using Microsoft.AspNetCore.Http;
-using Moq;
 using Shouldly;
 using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Endpoints.Results
+namespace Identityserver4.Anonnymous.Tests.Endpoints.Results
 {
     public class AuthorizationResultTests
     {

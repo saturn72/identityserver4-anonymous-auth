@@ -9,7 +9,7 @@ namespace IdentityServer4.Anonnymous
         public int AllowedRetries { get; set; } = Defaults.AllowedRetries;
         public string AllowedRetriesPropertyName { get; set; } = Constants.ClientProperties.AllowedRetries;
         public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
-        public int DefaultCodeLifetime { get; set; } = Defaults.CodeLifetime;
+        public int DefaultLifetime { get; set; } = Defaults.CodeLifetime;
         public string DefaultUserCodeType { get; set; } = Defaults.CodeGenetar.UserCodeType;
         public string DefaultUserCodeSmsFormat { get; set; } = Constants.Formats.Messages.UserCodeSmsFormat;
         public string DefaultUserCodeEmailFormat { get; set; } = Constants.Formats.Messages.UserCodeEmailFormat;
@@ -28,8 +28,8 @@ namespace IdentityServer4.Anonnymous
             if (!options.AllowedRetriesPropertyName.HasValue())
                 throw new ArgumentException($"bad or missing config: {nameof(AllowedRetriesPropertyName)}");
 
-            if (options.DefaultCodeLifetime == default)
-                throw new ArgumentException($"bad or missing config: {nameof(DefaultCodeLifetime)}");
+            if (options.DefaultLifetime == default)
+                throw new ArgumentException($"bad or missing config: {nameof(DefaultLifetime)}");
 
             if (!options.DefaultUserCodeType.HasValue())
                 throw new ArgumentException($"bad or missing config: {nameof(DefaultUserCodeType)}");

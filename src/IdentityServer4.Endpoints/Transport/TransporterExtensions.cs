@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonnymous.Services
+namespace IdentityServer4.Anonnymous.Transport
 {
-    internal static class AnonnymousCodeTransportExtensions
+    public static class TransporterExtensions
     {
-        public static Task Transport(this IEnumerable<ITransport> transports, UserCodeTransportContext context)
+        public static Task Transport(this IEnumerable<ITransporter> transports, UserCodeTransportContext context)
         {
-            var handlers = new List<(ITransport transport, Task<bool> shouldHandle)>();
+            var handlers = new List<(ITransporter transport, Task<bool> shouldHandle)>();
             foreach (var t in transports)
                 handlers.Add((t, t.ShouldHandle(context)));
             var tasks = handlers.Select(c => c.shouldHandle).ToArray();

@@ -2,7 +2,7 @@
 using IdentityServer4.Anonnymous.Endpoints;
 using IdentityServer4.Anonnymous.Endpoints.Results;
 using IdentityServer4.Anonnymous.Events;
-using IdentityServer4.Anonnymous.ResponseHandling;
+using IdentityServer4.Anonnymous.Services.Generators;
 using IdentityServer4.Anonnymous.Validation;
 using IdentityServer4.Services;
 using IdentityServer4.Validation;
@@ -16,7 +16,7 @@ using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Endpoints
+namespace Identityserver4.Anonnymous.Tests.Endpoints
 {
     public class AnonnymousAuthorizationEndpointTests
     {
@@ -61,7 +61,7 @@ namespace PhoneAuthorizationEndpoint.Tests.Endpoints
             res.ShouldBeOfType<TokenErrorResult>();
         }
         public static IEnumerable<object[]> ProcessAsync_FailedToValidateClient_DATA = new[]
-       {
+        {
             new object[] {null},
             new object[] { new ClientSecretValidationResult()},
             new object[] {new ClientSecretValidationResult
@@ -120,7 +120,7 @@ namespace PhoneAuthorizationEndpoint.Tests.Endpoints
 
             var evt = new Mock<IEventService>();
             var rg = new Mock<IAuthorizationResponseGenerator>();
-            rg.Setup(r => r.ProcessAsync(It.IsAny<AuthorizationRequestValidationResult>(), It.IsAny<string>()))
+            rg.Setup(r => r.ProcessAsync(It.IsAny<AuthorizationRequestValidationResult>()))
                 .ReturnsAsync(new AuthorizationResponse());
 
             var endpoint = new AnonnymousAuthorizationEndpoint(cv.Object, rv.Object, rg.Object, evt.Object, log.Object);

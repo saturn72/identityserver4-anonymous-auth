@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Extensions
+namespace Identityserver4.Anonnymous.Tests.Extensions
 {
     public class JsonElementExtensionsTests
     {

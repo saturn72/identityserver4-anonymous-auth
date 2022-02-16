@@ -1,4 +1,4 @@
-﻿namespace IdentityServer4.Anonnymous.Services
+﻿namespace IdentityServer4.Anonnymous.Transport
 {
     public record UserCodeTransportContext
     {

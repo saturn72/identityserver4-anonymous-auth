@@ -1,4 +1,4 @@
-﻿using IdentityServer4.Anonnymous.Services;
+﻿using IdentityServer4.Anonnymous.Transport;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -10,7 +10,7 @@ using Twilio.Types;
 
 namespace TwilioProviders
 {
-    public class TwilioSmsTransport : ITransport
+    public class TwilioSmsTransport : ITransporter
     {
         private readonly TwilioOptions _options;
         private readonly ILogger<TwilioSmsTransport> _logger;

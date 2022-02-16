@@ -5,7 +5,7 @@ namespace IdentityServer4.Anonnymous.Logging
 {
     internal static class LogSerializer
     {
-        static readonly JsonSerializerOptions Options = new JsonSerializerOptions
+        static readonly JsonSerializerOptions Options = new()
         {
             IgnoreNullValues = true,
             WriteIndented = true

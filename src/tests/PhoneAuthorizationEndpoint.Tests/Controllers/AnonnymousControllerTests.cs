@@ -15,7 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Controllers
+namespace Identityserver4.Anonnymous.Tests.Controllers
 {
     public class AnonnymousControllerTests
     {

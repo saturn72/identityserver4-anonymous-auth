@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Extensions
+namespace Identityserver4.Anonnymous.Tests.Extensions
 {
     public class StringExtensionsTests
     {
@@ -32,18 +32,18 @@ namespace PhoneAuthorizationEndpoint.Tests.Extensions
         public void TryParseAsJsonDocument_ReturnsTrue()
         {
             var j = "\"k\":\"v\"";
-            StringExtensions.TryParseAsJsonDocument(j, out var value).ShouldBeTrue();
-            value.ToString().ShouldBe(j);
+            StringExtensions.TryParseAsJsonDocument(j, out var value).ShouldBeFalse();
+            value.ShouldBeNull();
         }
         [Fact]
         public void EnsureLeadingSlash_ThrowsOnNull()
         {
-            Should.Throw<ArgumentNullException>(() => StringExtensions.EnsureLeadingSlash(default));
+            Should.Throw<NullReferenceException>(() => StringExtensions.EnsureLeadingSlash(default));
         }
         [Fact]
         public void EnsureLeadingSlash_ThrowsOnTooShort()
         {
-            Should.Throw<IndexOutOfRangeException>(() => StringExtensions.EnsureLeadingSlash(default));
+            Should.Throw<IndexOutOfRangeException>(() => StringExtensions.EnsureLeadingSlash(""));
         }
         [Fact]
         public void EnsureLeadingSlash_AddsLeadingSlash()
@@ -58,12 +58,12 @@ namespace PhoneAuthorizationEndpoint.Tests.Extensions
         [Fact]
         public void EnsureTrailingSlash_ThrowsOnNull()
         {
-            Should.Throw<ArgumentNullException>(() => StringExtensions.EnsureTrailingSlash(default));
+            Should.Throw<NullReferenceException>(() => StringExtensions.EnsureTrailingSlash(default));
         }
         [Fact]
         public void EnsureTrailingSlash_ThrowsOnTooShort()
         {
-            Should.Throw<IndexOutOfRangeException>(() => StringExtensions.EnsureTrailingSlash(default));
+            Should.Throw<IndexOutOfRangeException>(() => StringExtensions.EnsureTrailingSlash(""));
         }
         [Fact]
         public void EnsureTrailingSlash_AddOnMissingTrailingSlash()
@@ -80,12 +80,12 @@ namespace PhoneAuthorizationEndpoint.Tests.Extensions
         [Fact]
         public void RemoveTrailingSlash_ThrowsOnNull()
         {
-            Should.Throw<ArgumentNullException>(() => StringExtensions.RemoveTrailingSlash(default));
+            Should.Throw<NullReferenceException>(() => StringExtensions.RemoveTrailingSlash(default));
         }
         [Fact]
         public void RemoveTrailingSlash_ThrowsOnTooShort()
         {
-            Should.Throw<IndexOutOfRangeException>(() => StringExtensions.RemoveTrailingSlash(default));
+            Should.Throw<IndexOutOfRangeException>(() => StringExtensions.RemoveTrailingSlash(""));
         }
         [Fact]
         public void RemoveTrailingSlash_RemovesOnTrailingSlashExists()
@@ -113,7 +113,7 @@ namespace PhoneAuthorizationEndpoint.Tests.Extensions
         {
             var u = "https://saturn72.com";
             StringExtensions.TryConvertToUri(u, out var value).ShouldBeTrue();
-            value.ToString().ShouldBe(u);
+            value.AbsoluteUri.StartsWith(u).ShouldBeTrue();
         }
 
         [Theory]

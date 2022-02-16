@@ -4,7 +4,7 @@ using Shouldly;
 using System;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Endpoints.Results
+namespace Identityserver4.Anonnymous.Tests.Endpoints.Results
 {
     public class TokenErrorResultTests
     {

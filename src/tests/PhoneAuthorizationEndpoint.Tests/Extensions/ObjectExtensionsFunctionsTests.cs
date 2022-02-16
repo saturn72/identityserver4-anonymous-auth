@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Extensions
+namespace Identityserver4.Anonnymous.Tests.Extensions
 {
     public class ObjectExtensionsFunctionsTests
     {

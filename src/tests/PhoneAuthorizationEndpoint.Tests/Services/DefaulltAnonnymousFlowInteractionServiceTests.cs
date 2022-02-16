@@ -13,9 +13,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Services
+namespace Identityserver4.Anonnymous.Tests.Services
 {
-    public class DefaltAnonnymousFlowInteractionServiceTests
+    public class DefaulltAnonnymousFlowInteractionServiceTests
     {
         [Fact]
         public async Task HandleRequestAsync_ThrowsOnDefaultCode()

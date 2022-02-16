@@ -1,4 +1,4 @@
-﻿using IdentityServer4.Anonnymous.Services;
+﻿using IdentityServer4.Anonnymous.Transport;
 using Microsoft.Extensions.Configuration;
 using TwilioProviders;
 
@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .Bind(configuration.GetSection(TwilioOptions.Section))
                 .Validate(TwilioOptions.Validate);
 
-            services.AddScoped<ITransport, TwilioSmsTransport>();
+            services.AddScoped<ITransporter, TwilioSmsTransport>();
 
             return builder;
         }

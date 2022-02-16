@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Extensions
+namespace Identityserver4.Anonnymous.Tests.Extensions
 {
     public class ClaimExtensionsTests
     {

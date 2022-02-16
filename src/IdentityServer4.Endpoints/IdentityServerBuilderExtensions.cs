@@ -1,5 +1,4 @@
 using IdentityServer4.Anonnymous;
-using IdentityServer4.Anonnymous.ResponseHandling;
 using IdentityServer4.Anonnymous.Services;
 using IdentityServer4.Anonnymous.Services.Generators;
 using IdentityServer4.Services;
@@ -26,7 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var services = builder.Services;
             services.AddTransient<IAnonnymousAuthorizationRequestValidator, AnonnymousAuthorizationRequestValidator>();
-            services.AddTransient<IAuthorizationResponseGenerator, AnonnymousAuthorizationResponseGenerator>();
+            services.AddTransient<IAuthorizationResponseGenerator, AuthorizationResponseGenerator>();
             services.AddTransient<IAnonnymousCodeValidator, AnonnymousCodeValidator>();
             services.AddSingleton<IUserCodeGenerator>(sp => new DynamicNumericUserCodeGenerator(Defaults.CodeGenetar.NumberOfFigures, Defaults.CodeGenetar.UserCodeType));
             services.AddOptions<AnonnymousAuthorizationOptions>()

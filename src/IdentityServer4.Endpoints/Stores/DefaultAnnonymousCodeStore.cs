@@ -37,6 +37,8 @@ namespace IdentityServer4.Anonnymous.Stores
         public async Task<AnonnymousCodeInfo> FindByVerificationCodeAsync(string code, bool includeExpiredAndVerified)
         {
             _logger.LogDebug($"start {nameof(FindByVerificationCodeAsync)}");
+            if (!code.HasValue())
+                return null;
             var query = includeExpiredAndVerified ?
                 AnonnymousCodeScripts.SelectByVeridicationCode :
                 AnonnymousCodeScripts.SelectByVerificationCodeExcludeExpiredAndVerified;
@@ -47,27 +49,29 @@ namespace IdentityServer4.Anonnymous.Stores
         public async Task<AnonnymousCodeInfo> FindByVerificationCodeAndUserCodeAsync(string verificationCode, string userCode)
         {
             _logger.LogDebug($"start {nameof(FindByVerificationCodeAndUserCodeAsync)}");
+            if (!verificationCode.HasValue() || !userCode.HasValue())
+                return null;
+
             var query = AnonnymousCodeScripts.SelectByVerificationAndUserCodeExcludeExpiredAndVerified;
             var ac = await GetSingleItem(query, new { VerificationCode = verificationCode.Sha256(), UserCode = userCode.Sha256()});
             _logger.LogDebug($"{nameof(AnonnymousCodeInfo)} was returned from store: {ac.ToJsonString()}");
             return ac;
         }
-        public async Task<AnonnymousCodeInfo> GetSingleItem(string query, object prms)
+        private async Task<AnonnymousCodeInfo> GetSingleItem(string query, object prms)
         {
             using var con = _createDbConnection();
             var model = await con.QuerySingleOrDefaultAsync<AnonnymousCodeDbModel>(query, prms);
             return model == null ? null : FromDbModel(model);
         }
-        public async Task StoreAnonnymousCodeInfoAsync(string verificationCode, AnonnymousCodeInfo data)
+        public async Task StoreAnonnymousCodeInfoAsync(string verificationCode, AnonnymousCodeInfo info)
         {
             _logger.LogInformation($"Start {nameof(StoreAnonnymousCodeInfoAsync)}");
-            if (!verificationCode.HasValue()) throw new ArgumentNullException(nameof(verificationCode));
-            //if (!anonnymouseCode.HasValue()) throw new ArgumentNullException(nameof(anonnymouseCode));
-            if (data == default) throw new ArgumentNullException(nameof(data));
+            if (!verificationCode.HasValue()) throw new ArgumentException(nameof(verificationCode));
+            if (info == default) throw new ArgumentNullException(nameof(info));
 
-            _logger.LogDebug($"Storing anonnymous code: {data.ToJsonString()}");
+            _logger.LogDebug($"Storing anonnymous code: {info.ToJsonString()}");
 
-            var dbModel = ToDbModel(data);
+            var dbModel = ToDbModel(info);
             dbModel.VerificationCode = verificationCode.Sha256();
             using var con = _createDbConnection();
             await con.ExecuteAsync(AnonnymousCodeScripts.InsertCommand, dbModel);
@@ -80,8 +84,17 @@ namespace IdentityServer4.Anonnymous.Stores
             await con.ExecuteAsync(AnonnymousCodeScripts.UpdateVerificationRetry, new { VerificationCode = verificationCode.Sha256() });
         }
 
+        public Task<IEnumerable<string>> GetAllSubjectIds()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Authorize(AnonnymousCodeInfo code)
+        {
+            throw new NotImplementedException();
+        }
         #region Utilities and nested classes
-        internal record AnonnymousCodeDbModel
+        public record AnonnymousCodeDbModel
         {
             public Guid Id { get; set; }
             public int AllowedRetries { get; set; }
@@ -130,15 +143,6 @@ namespace IdentityServer4.Anonnymous.Stores
             VerifiedOnUtc = model.VerifiedOnUtc
         };
 
-        public Task<IEnumerable<string>> GetAllSubjectIds()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Authorize(AnonnymousCodeInfo code)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
     }
 }

@@ -1,7 +1,7 @@
 using IdentityServer4.Events;
 using IdentityServer4.Anonnymous.Validation;
 using System;
-using IdentityServer4.Anonnymous.ResponseHandling;
+using IdentityServer4.Anonnymous.Services.Generators;
 
 namespace IdentityServer4.Anonnymous.Events
 {

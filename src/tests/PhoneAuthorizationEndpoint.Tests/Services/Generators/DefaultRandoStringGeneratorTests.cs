@@ -3,7 +3,7 @@ using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace PhoneAuthorizationEndpoint.Tests.Generators
+namespace Identityserver4.Anonnymous.Tests.Services.Generators
 {
     public class DefaultRandoStringGeneratorTests
     {

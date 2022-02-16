@@ -46,10 +46,10 @@ namespace IdentityServer4.Anonnymous
                 return;
             }
 
-            var code = context.Request.Raw.Get("Phone_code");
+            var code = context.Request.Raw.Get("user_code");
             if (!code.HasValue())
             {
-                Error(context, "Invalid Phone code");
+                Error(context, "Invalid User code");
                 return;
             }
             string amr;
