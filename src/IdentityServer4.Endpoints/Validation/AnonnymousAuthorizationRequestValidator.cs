@@ -6,13 +6,11 @@ using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Linq;
 using IdentityServer4.Anonnymous.Models;
-using IdentityServer4.Anonnymous.Validation;
 using IdentityModel;
 using System.Collections.Generic;
 using IdentityServer4.Anonnymous.Logging;
-using System.Text.Json;
 
-namespace IdentityServer4.Anonnymous
+namespace IdentityServer4.Anonnymous.Validation
 {
     public sealed class AnonnymousAuthorizationRequestValidator : IAnonnymousAuthorizationRequestValidator
     {
@@ -36,7 +34,7 @@ namespace IdentityServer4.Anonnymous
             NameValueCollection parameters,
             ClientSecretValidationResult clientValidationResult)
         {
-            _logger.LogDebug("Start phone authorization request validation");
+            _logger.LogDebug("Start anonnymous authorization request validation");
 
             var request = new ValidatedAnonnymousAuthorizationRequest
             {
@@ -58,7 +56,7 @@ namespace IdentityServer4.Anonnymous
             {
                 return scopeResult;
             }
-            _logger.LogDebug("{clientId} Phone request validation success", request.Client.ClientId);
+            _logger.LogDebug("{clientId} anonnymous request validation success", request.Client.ClientId);
             return Valid(request);
         }
 
@@ -81,13 +79,12 @@ namespace IdentityServer4.Anonnymous
             }
             request.Transport = transport;
 
-            var provider = parameters[Constants.FormParameters.Provider];
-            if (!provider.HasValue())
+            request.Provider = parameters[Constants.FormParameters.Provider];
+            if (!request.Provider.HasValue())
             {
                 LogError($"Request Properties: missing or unsupportted value for {Constants.FormParameters.Provider}", request);
                 return Invalid(request);
             }
-            request.Provider = provider;
             request.TransportData = parameters[Constants.FormParameters.TransportData]; ;
 
             request.State = parameters[Constants.FormParameters.State];
@@ -101,8 +98,10 @@ namespace IdentityServer4.Anonnymous
             //////////////////////////////////////////////////////////
             // set client & secret
             //////////////////////////////////////////////////////////
-            if (clientValidationResult == null) throw new ArgumentNullException(nameof(clientValidationResult));
-            request.SetClient(clientValidationResult.Client, clientValidationResult.Secret);
+            if (clientValidationResult == default) throw new ArgumentNullException(nameof(clientValidationResult));
+            request.SetClient(
+                clientValidationResult.Client ?? throw new ArgumentNullException(nameof(clientValidationResult.Client)),
+                clientValidationResult.Secret);
 
             //////////////////////////////////////////////////////////
             // check if client protocol type is oidc
@@ -114,24 +113,18 @@ namespace IdentityServer4.Anonnymous
             }
 
             //////////////////////////////////////////////////////////
-            // check if client allows phone flow
+            // check if client allows anonnymous flow
             //////////////////////////////////////////////////////////
             if (!request.Client.AllowedGrantTypes.Contains(Constants.AnonnymousGrantType))
             {
-                LogError("Client not configured for phone flow", Constants.AnonnymousGrantType, request);
+                LogError("Client not configured for anonnymous flow", Constants.AnonnymousGrantType, request);
                 return Invalid(request, OidcConstants.AuthorizeErrors.UnauthorizedClient);
             }
 
             //validate transport
-            var transports = request.Client.Properties[Constants.ClientProperties.Transports];
-            var transportProvider = request.Client.Properties[Constants.ClientProperties.Transports];
-            if (!transports.HasValue())
-            {
-                LogError($"Client Properties: bad or missing data for {Constants.ClientProperties.Transports}", request);
-                return Invalid(request);
-            }
-
-            if (!transports.TryParseAsJsonDocument(out var doc))
+            if (!request.Client.Properties.TryGetValue(Constants.ClientProperties.Transports, out var transports) ||
+                !transports.HasValue() || 
+                !transports.TryParseAsJsonDocument(out var doc))
             {
                 LogError($"Client Properties: bad or missing data for {Constants.ClientProperties.Transports}", request);
                 return Invalid(request);

@@ -8,6 +8,7 @@ using IdentityServer4.Anonnymous.Stores;
 using System.Data.SqlClient;
 using IdentityServer4.Anonnymous.Endpoints;
 using System.Data;
+using IdentityServer4.Anonnymous.Validation;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
