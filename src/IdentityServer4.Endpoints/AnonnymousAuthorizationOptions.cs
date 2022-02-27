@@ -20,7 +20,7 @@ namespace IdentityServer4.Anonnymous
         public string[] Transports { get; set; } = Array.Empty<string>();
         public string VerificationUri { get; set; } = Constants.EndpointPaths.VerificationUri;
 
-        internal static bool Validate(AnonnymousAuthorizationOptions options)
+        public static bool Validate(AnonnymousAuthorizationOptions options)
         {
             if (options.AllowedRetries == default)
                 throw new ArgumentException($"bad or missing config: {nameof(AllowedRetries)}");
@@ -32,7 +32,7 @@ namespace IdentityServer4.Anonnymous
                 throw new ArgumentException($"bad or missing config: {nameof(DefaultLifetime)}");
 
             if (!options.DefaultUserCodeType.HasValue())
-                throw new ArgumentException($"bad or missing config: {nameof(DefaultUserCodeType)}");
+                throw new ArgumentNullException($"bad or missing config: {nameof(DefaultUserCodeType)}");
 
             if (options.InputLengthRestrictions == default)
                 throw new ArgumentException($"bad or missing config: {nameof(InputLengthRestrictions)}");
