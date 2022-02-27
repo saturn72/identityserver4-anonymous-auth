@@ -12,7 +12,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var services = builder.Services;
 
-
             services.AddOptions<TwilioOptions>()
                 .Bind(configuration.GetSection(TwilioOptions.Section))
                 .Validate(TwilioOptions.Validate);

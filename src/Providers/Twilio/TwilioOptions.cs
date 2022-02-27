@@ -14,7 +14,6 @@ namespace TwilioProviders
             public string Phone { get; set; }
             public string Provider { get; set; }
         }
-
         internal static bool Validate(TwilioOptions options)
         {
             var a = options.Accounts;

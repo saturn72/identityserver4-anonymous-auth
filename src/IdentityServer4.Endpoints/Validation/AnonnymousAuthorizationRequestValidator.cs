@@ -9,6 +9,7 @@ using IdentityServer4.Anonnymous.Models;
 using IdentityModel;
 using System.Collections.Generic;
 using IdentityServer4.Anonnymous.Logging;
+using System.Text.Json;
 
 namespace IdentityServer4.Anonnymous.Validation
 {
@@ -123,7 +124,7 @@ namespace IdentityServer4.Anonnymous.Validation
 
             //validate transport
             if (!request.Client.Properties.TryGetValue(Constants.ClientProperties.Transports, out var transports) ||
-                !transports.HasValue() || 
+                !transports.HasValue() ||
                 !transports.TryParseAsJsonDocument(out var doc))
             {
                 LogError($"Client Properties: bad or missing data for {Constants.ClientProperties.Transports}", request);
@@ -143,7 +144,7 @@ namespace IdentityServer4.Anonnymous.Validation
             var p = request.Raw[Constants.FormParameters.Provider];
             var matchingProvider = matchingTransports.FirstOrDefault(x => x.PropertyStringValueEqualsTo(Constants.ClientProperties.TransportProvider, p));
 
-            if (matchingProvider.Equals(default))
+            if (matchingProvider.ValueKind == JsonValueKind.Undefined)
             {
                 LogError($"Invalid or missing transport provider", request);
                 return Invalid(request);
@@ -152,7 +153,6 @@ namespace IdentityServer4.Anonnymous.Validation
             var redirectUri = request.Raw.Get(Constants.FormParameters.RedirectUri);
             if (!redirectUri.HasValue() ||
                 !redirectUri.TryConvertToUri(out var redirectUriAsUri) ||
-                !request.Client.RedirectUris.Contains(redirectUri) ||
                 !request.Client.RedirectUris.Any(r => uriEqual(new Uri(r), redirectUriAsUri)))
             {
                 LogDebug($"Invalid redirect_uri: {redirectUri}", Constants.AnonnymousGrantType, request);
@@ -180,23 +180,8 @@ namespace IdentityServer4.Anonnymous.Validation
             var scope = request.Raw.Get(OidcConstants.AuthorizeRequest.Scope);
             if (!scope.HasValue())
             {
-                _logger.LogTrace("Client provided no scopes - checking allowed scopes list");
-
-                if (!request.Client.AllowedScopes.IsNullOrEmpty())
-                {
-                    var clientAllowedScopes = new List<string>(request.Client.AllowedScopes);
-                    if (request.Client.AllowOfflineAccess)
-                    {
-                        clientAllowedScopes.Add(IdentityServerConstants.StandardScopes.OfflineAccess);
-                    }
-                    scope = clientAllowedScopes.ToDelimitedString(" ");
-                    _logger.LogTrace("Defaulting to: {scopes}", scope);
-                }
-                else
-                {
-                    LogError("No allowed scopes configured for client", request);
-                    return Invalid(request, OidcConstants.AuthorizeErrors.InvalidScope);
-                }
+                LogError("No allowed scopes configured for client", request);
+                return Invalid(request, OidcConstants.AuthorizeErrors.InvalidScope);
             }
 
             if (scope.Length > _options.InputLengthRestrictions.Scope)
@@ -221,9 +206,9 @@ namespace IdentityServer4.Anonnymous.Validation
                 Scopes = request.RequestedScopes
             });
 
-            if (!validatedResources.Succeeded)
+            if (validatedResources == default || !validatedResources.Succeeded)
             {
-                if (validatedResources.InvalidScopes.Count > 0)
+                if (validatedResources?.InvalidScopes?.Count > 0)
                 {
                     return Invalid(request, OidcConstants.AuthorizeErrors.InvalidScope);
                 }

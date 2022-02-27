@@ -1,4 +1,6 @@
-﻿using IdentityServer4.Anonnymous.Validation;
+﻿using IdentityModel;
+using IdentityServer4.Anonnymous.Validation;
+using IdentityServer4.Configuration;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.Extensions.Logging;
@@ -198,7 +200,7 @@ namespace IdentityServer4.Anonnymous.Tests.Validation
         [InlineData(default)]
         [InlineData("")]
         [InlineData(" ")]
-        [InlineData(" invalid json")]
+        [InlineData(" invalid transport json")]
         public async Task ValidateAsync_ReturnsError_BlankTransports_ForClient(string value)
         {
             var csvr = new ClientSecretValidationResult
@@ -207,7 +209,7 @@ namespace IdentityServer4.Anonnymous.Tests.Validation
                 {
                     ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
                     AllowedGrantTypes = { "anonnymous" },
-                    Properties = new Dictionary<string, string> { { "transport", value } },
+                    Properties = new Dictionary<string, string> { { "transports", value } },
                 },
             };
             var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
@@ -228,20 +230,344 @@ namespace IdentityServer4.Anonnymous.Tests.Validation
             var res = await v.ValidateAsync(nvc, csvr);
             res.IsError.ShouldBeTrue();
         }
-        /* 
-        //validate client
-        var clientResult = ValidateClient(request, clientValidationResult);
-        if (clientResult.IsError)
-            return clientResult;
 
-        //validate scope
-        var scopeResult = await ValidateScopeAsync(request);
-        if (scopeResult.IsError)
+        [Theory]
+        [InlineData(default)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(" no-match-provider")]
+        public async Task ValidateAsync_ReturnsError_NoMatchingProvider(string value)
         {
-            return scopeResult;
+            var t = string.Format("[{{\"name\":\"t1\", \"provider\":\"{0}\", \"config\":{{\"key\":\"twilio\"}}}}]", value);
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", t },
+                    },
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, null, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p1"
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
         }
-        _logger.LogDebug("{clientId} anonnymous request validation success", request.Client.ClientId);
-        return Valid(request);
-    }*/
+
+        [Theory]
+        [InlineData(default)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData(" this is not uri")]
+        [InlineData("http://not-exists.com/callback")]
+        public async Task ValidateAsync_ReturnsError_NoRedirectUri(string value)
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" }
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, null, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = value
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ValidateAsync_ReturnsError_InvalidScope_NoScopes()
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" }
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, null, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = "http://exists.com/callback"
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
+        }
+
+        [Theory]
+        [InlineData(default)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ValidateAsync_ReturnsError_InvalidScope_MissingValueScopes(string value)
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" }
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, null, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = "http://exists.com/callback",
+                [OidcConstants.AuthorizeRequest.Scope] = value
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
+        }
+        [Fact]
+        public async Task ValidateAsync_ReturnsError_InvalidScope_ScopeToLong()
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" }
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" },
+                InputLengthRestrictions = new InputLengthRestrictions
+                {
+                    Scope = 1,
+                }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, null, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = "http://exists.com/callback",
+                [OidcConstants.AuthorizeRequest.Scope] = "to-long",
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
+        }
+
+        [Theory]
+        [MemberData(nameof(ValidateAsync_ReturnsError_InvalidScope_ResourceValidatorFailure_DATA))]
+        public async Task ValidateAsync_ReturnsError_InvalidScope_ResourceValidatorFailure(ResourceValidationResult result)
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" },
+                    AllowedScopes = { "scope-1" },
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" },
+                InputLengthRestrictions = new InputLengthRestrictions
+                {
+                    Scope = 100,
+                }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var rv = new Mock<IResourceValidator>();
+            rv.Setup(r => r.ValidateRequestedResourcesAsync(It.IsAny<ResourceValidationRequest>()))
+                .ReturnsAsync(result);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, rv.Object, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = "http://exists.com/callback",
+                [OidcConstants.AuthorizeRequest.Scope] = "to-long",
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
+        }
+        public static IEnumerable<object[]> ValidateAsync_ReturnsError_InvalidScope_ResourceValidatorFailure_DATA = new[]
+        {
+            new object[] { null },
+            new object[] { new ResourceValidationResult() },
+        };
+
+        [Fact]
+        public async Task ValidateAsync_ReturnsError_InvalidScope_OnNonOpenIdScope()
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" },
+                    AllowedScopes = { "scope-1" },
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" },
+                InputLengthRestrictions = new InputLengthRestrictions
+                {
+                    Scope = 100,
+                }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var vrResult = new ResourceValidationResult();
+            vrResult.ParsedScopes.Add(new ParsedScopeValue("x"));
+            vrResult.Resources.IdentityResources.Add(new IdentityResource());
+
+            var rv = new Mock<IResourceValidator>();
+            rv.Setup(r => r.ValidateRequestedResourcesAsync(It.IsAny<ResourceValidationRequest>()))
+                .ReturnsAsync(vrResult);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, rv.Object, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = "http://exists.com/callback",
+                [OidcConstants.AuthorizeRequest.Scope] = "to-long",
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ValidateAsync_ValidaRequest()
+        {
+            var csvr = new ClientSecretValidationResult
+            {
+                Client = new Client
+                {
+                    ProtocolType = IdentityServerConstants.ProtocolTypes.OpenIdConnect,
+                    AllowedGrantTypes = { "anonnymous" },
+                    Properties = new Dictionary<string, string> {
+                        { "transports", "[{\"name\":\"t1\", \"provider\":\"p\", \"config\":{\"key\":\"twilio\"}}]" },
+                    },
+                    RedirectUris = { "http://exists.com/callback" },
+                    AllowedScopes = { "scope-1" },
+                },
+            };
+            var log = new Mock<ILogger<AnonnymousAuthorizationRequestValidator>>();
+            var oData = new AnonnymousAuthorizationOptions
+            {
+                Transports = new[] { "t1", "t2" },
+                InputLengthRestrictions = new InputLengthRestrictions
+                {
+                    Scope = 100,
+                }
+            };
+            var opt = new Mock<IOptions<AnonnymousAuthorizationOptions>>();
+            opt.Setup(o => o.Value).Returns(oData);
+
+            var vrResult = new ResourceValidationResult();
+            vrResult.ParsedScopes.Add(new ParsedScopeValue("x"));
+
+            var rv = new Mock<IResourceValidator>();
+            rv.Setup(r => r.ValidateRequestedResourcesAsync(It.IsAny<ResourceValidationRequest>()))
+                .ReturnsAsync(vrResult);
+
+            var v = new AnonnymousAuthorizationRequestValidator(opt.Object, rv.Object, log.Object);
+
+            var nvc = new NameValueCollection
+            {
+                [Constants.FormParameters.Transport] = "t1",
+                [Constants.FormParameters.Provider] = "p",
+                [Constants.FormParameters.RedirectUri] = "http://exists.com/callback",
+                [OidcConstants.AuthorizeRequest.Scope] = "to-long",
+            };
+            var res = await v.ValidateAsync(nvc, csvr);
+            res.IsError.ShouldBeFalse();
+        }
     }
 }
