@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonnymous.Services.Generators
+namespace IdentityServer4.Anonymous.Services.Generators
 {
     public interface IRandomStringGenerator
     {

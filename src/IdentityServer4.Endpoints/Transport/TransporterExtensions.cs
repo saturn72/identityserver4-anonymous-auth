@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonnymous.Transport
+namespace IdentityServer4.Anonymous.Transport
 {
     public static class TransporterExtensions
     {

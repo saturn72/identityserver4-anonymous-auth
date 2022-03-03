@@ -1,4 +1,4 @@
-using IdentityServer4.Anonnymous;
+using IdentityServer4.Anonymous;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,12 +22,12 @@ namespace TestBackend
             services.AddControllersWithViews();
             _ = services.AddIdentityServer(options =>
             {
-                options.Discovery.CustomEntries.Add(Constants.EndpointNames.AnonnymousAuthorization, $"~{Constants.EndpointPaths.AuthorizationEndpoint}");
+                options.Discovery.CustomEntries.Add(Constants.EndpointNames.AnonymousAuthorization, $"~{Constants.EndpointPaths.AuthorizationEndpoint}");
             })
                .AddDeveloperSigningCredential()        //This is for dev only scenarios when you don’t have a certificate to use.
                .AddInMemoryApiScopes(Config.ApiScopes)
                .AddInMemoryClients(Config.Clients)
-               .AddAnonnymousAuthorization(_config, _config.GetConnectionString("DefaultConnection"))
+               .AddAnonymousAuthorization(_config, _config.GetConnectionString("DefaultConnection"))
                .AddTwilioProviders(_config);
         }
 

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.Anonnymous", "IdentityServer4.Endpoints\IdentityServer4.Anonnymous.csproj", "{B598D268-7676-49D7-A742-AA33DCC2B5B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.Anonymous", "IdentityServer4.Endpoints\IdentityServer4.Anonymous.csproj", "{B598D268-7676-49D7-A742-AA33DCC2B5B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.Anonnymous.Tests", "tests\PhoneAuthorizationEndpoint.Tests\IdentityServer4.Anonnymous.Tests.csproj", "{F5E445A7-3F59-4B10-A305-2689FEE5F530}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.Anonymous.Tests", "tests\PhoneAuthorizationEndpoint.Tests\IdentityServer4.Anonymous.Tests.csproj", "{F5E445A7-3F59-4B10-A305-2689FEE5F530}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityModel.Anonnymous", "IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonnymous.csproj", "{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityModel.Anonymous", "IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonymous.csproj", "{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBackend", "tests\TestBackend\TestBackend.csproj", "{4C7F179D-7420-48B7-9888-99FFDE09E7EC}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{53434085-40D9-4DE4-B04E-64DA8B1D7F99}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwilioProviders", "Providers\Twilio\TwilioProviders.csproj", "{A20D19B0-41C1-4920-9980-B744D43C8F4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "tests\Client\Client.csproj", "{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A20D19B0-41C1-4920-9980-B744D43C8F4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 		{F5E445A7-3F59-4B10-A305-2689FEE5F530} = {1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}
 		{4C7F179D-7420-48B7-9888-99FFDE09E7EC} = {1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}
 		{A20D19B0-41C1-4920-9980-B744D43C8F4D} = {53434085-40D9-4DE4-B04E-64DA8B1D7F99}
+		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9} = {1850661B-EDE3-4B2B-AD5E-AF4A7854DAC4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89404D51-2C80-469A-B7BC-131A6DD78ADF}

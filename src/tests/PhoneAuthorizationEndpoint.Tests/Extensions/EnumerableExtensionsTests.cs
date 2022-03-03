@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Identityserver4.Anonnymous.Tests.Extensions
+namespace Identityserver4.Anonymous.Tests.Extensions
 {
     public class EnumerableExtensionsTests
     {

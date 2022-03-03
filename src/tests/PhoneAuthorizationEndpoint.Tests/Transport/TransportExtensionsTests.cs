@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace IdentityServer4.Anonnymous.Transport
+namespace IdentityServer4.Anonymous.Transport
 {
     public class TransportExtensionsTests
     {

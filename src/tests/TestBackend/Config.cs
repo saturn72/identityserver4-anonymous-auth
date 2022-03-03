@@ -1,5 +1,5 @@
 ﻿using IdentityServer4.Models;
-using IdentityServer4.Anonnymous;
+using IdentityServer4.Anonymous;
 using System.Collections.Generic;
 
 namespace TestBackend
@@ -20,7 +20,7 @@ namespace TestBackend
 
             // no interactive user, use the clientid/secret for authentication
             AllowedGrantTypes = {
-                Constants.AnonnymousGrantType,
+                Constants.AnonymousGrantType,
             },
             RequireClientSecret = false,
             RedirectUris = { "https://localhost:5001/" },

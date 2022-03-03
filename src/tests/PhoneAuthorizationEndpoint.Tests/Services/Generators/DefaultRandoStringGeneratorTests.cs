@@ -1,9 +1,9 @@
-﻿using IdentityServer4.Anonnymous.Services.Generators;
+﻿using IdentityServer4.Anonymous.Services.Generators;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Identityserver4.Anonnymous.Tests.Services.Generators
+namespace Identityserver4.Anonymous.Tests.Services.Generators
 {
     public class DefaultRandoStringGeneratorTests
     {

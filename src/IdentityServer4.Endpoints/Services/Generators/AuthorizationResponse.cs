@@ -1,4 +1,4 @@
-﻿namespace IdentityServer4.Anonnymous.Services.Generators
+﻿namespace IdentityServer4.Anonymous.Services.Generators
 {
     public class AuthorizationResponse
     {

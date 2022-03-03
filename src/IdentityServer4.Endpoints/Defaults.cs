@@ -1,6 +1,6 @@
-﻿namespace IdentityServer4.Anonnymous
+﻿namespace IdentityServer4.Anonymous
 {
-    internal sealed class Defaults
+    public sealed class Defaults
     {
         internal const int AllowedRetries = 5;
         internal static int CodeLifetime = 60;

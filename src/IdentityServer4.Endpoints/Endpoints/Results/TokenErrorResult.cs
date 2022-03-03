@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonnymous.Endpoints.Results
+namespace IdentityServer4.Anonymous.Endpoints.Results
 {
     public class TokenErrorResult : IEndpointResult
     {

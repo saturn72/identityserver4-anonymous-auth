@@ -1,7 +1,7 @@
-using IdentityServer4.Anonnymous.Models;
+using IdentityServer4.Anonymous.Models;
 using IdentityServer4.Validation;
 
-namespace IdentityServer4.Anonnymous.Validation
+namespace IdentityServer4.Anonymous.Validation
 {
     public class AuthorizationRequestValidationResult : ValidationResult
     {
@@ -9,7 +9,7 @@ namespace IdentityServer4.Anonnymous.Validation
         /// Initializes a new instance of the <see cref="AuthorizationRequestValidationResult"/> class.
         /// </summary>
         /// <param name="request">The request.</param>
-        public AuthorizationRequestValidationResult(ValidatedAnonnymousAuthorizationRequest request)
+        public AuthorizationRequestValidationResult(ValidatedAnonymousAuthorizationRequest request)
         {
             IsError = false;
             ValidatedRequest = request;
@@ -21,7 +21,7 @@ namespace IdentityServer4.Anonnymous.Validation
         /// <param name="request">The request.</param>
         /// <param name="error">The error.</param>
         /// <param name="errorDescription">The error description.</param>
-        public AuthorizationRequestValidationResult(ValidatedAnonnymousAuthorizationRequest request, string error, string errorDescription = null)
+        public AuthorizationRequestValidationResult(ValidatedAnonymousAuthorizationRequest request, string error, string errorDescription = null)
         {
             IsError = true;
 
@@ -36,6 +36,6 @@ namespace IdentityServer4.Anonnymous.Validation
         /// <value>
         /// The validated request.
         /// </value>
-        public ValidatedAnonnymousAuthorizationRequest ValidatedRequest { get; }
+        public ValidatedAnonymousAuthorizationRequest ValidatedRequest { get; }
     }
 }

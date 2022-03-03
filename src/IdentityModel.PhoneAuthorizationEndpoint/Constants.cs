@@ -2,7 +2,8 @@
 {
     internal class Constants
     {
-        public sealed class AnonnymousAuthorizationResponse
+        internal const string GrantType = "anonymous";
+        public sealed class AnonymousAuthorizationResponse
         {
             public const string VerificationCode = "verification_code";
             public const string VerificationUri = "verification_uri";
@@ -10,7 +11,7 @@
             public const string ExpiresIn = "expires_in";
             public const string Interval = "interval";
         }
-        public sealed class AnonnymousAuthorizationRequest
+        public sealed class AnonymousAuthorizationRequest
         {
             public const string RedirectUri = "redirect_uri";
             public const string State = "state";

@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonnymous.csproj" />
+    <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonymous.csproj" />
   </ItemGroup>
 
 </Project>

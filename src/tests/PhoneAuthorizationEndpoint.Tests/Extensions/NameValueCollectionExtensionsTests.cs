@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Xunit;
 
-namespace IdentityServer4.Anonnymous.Tests.Extensions
+namespace IdentityServer4.Anonymous.Tests.Extensions
 {
     public class NameValueCollectionExtensionsTests
     {

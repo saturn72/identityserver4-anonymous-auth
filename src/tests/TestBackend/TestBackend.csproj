@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonnymous.csproj" />
-    <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonnymous.csproj" />
+    <ProjectReference Include="..\..\IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonymous.csproj" />
+    <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonymous.csproj" />
     <ProjectReference Include="..\..\Providers\Twilio\TwilioProviders.csproj" />
   </ItemGroup>
 

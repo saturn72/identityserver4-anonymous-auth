@@ -1,6 +1,6 @@
 ﻿using IdentityServer4.Extensions;
 using IdentityServer4.Models;
-using IdentityServer4.Anonnymous.Validation;
+using IdentityServer4.Anonymous.Validation;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -8,17 +8,17 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using IdentityServer4.Anonnymous.Stores;
-using IdentityServer4.Anonnymous.Transport;
+using IdentityServer4.Anonymous.Stores;
+using IdentityServer4.Anonymous.Transport;
 
-namespace IdentityServer4.Anonnymous.Services.Generators
+namespace IdentityServer4.Anonymous.Services.Generators
 {
     public class AuthorizationResponseGenerator : IAuthorizationResponseGenerator
     {
         #region fields
         private readonly IUserCodeService _userCodeService;
-        private readonly AnonnymousAuthorizationOptions _options;
-        private readonly IAnnonymousCodeStore _codeStore;
+        private readonly AnonymousAuthorizationOptions _options;
+        private readonly IAnonymousCodeStore _codeStore;
         private readonly IEnumerable<ITransporter> _transports;
         private readonly ISystemClock _clock;
         private readonly IHandleGenerationService _handleGenerationService;
@@ -28,8 +28,8 @@ namespace IdentityServer4.Anonnymous.Services.Generators
         #region ctor
         public AuthorizationResponseGenerator(
             IUserCodeService userCodeService,
-            IOptions<AnonnymousAuthorizationOptions> options,
-            IAnnonymousCodeStore codeStore,
+            IOptions<AnonymousAuthorizationOptions> options,
+            IAnonymousCodeStore codeStore,
             IEnumerable<ITransporter> transports,
             ISystemClock clock,
             IHandleGenerationService handleGenerationService,
@@ -48,18 +48,18 @@ namespace IdentityServer4.Anonnymous.Services.Generators
         public async Task<AuthorizationResponse> ProcessAsync(
             AuthorizationRequestValidationResult validationResult)
         {
-            _logger.LogInformation("start Processing anonnymous request");
+            _logger.LogInformation("start Processing anonymous request");
             if (validationResult == null) throw new ArgumentNullException(nameof(validationResult));
 
             var validatedRequest = validationResult.ValidatedRequest;
             var client = validatedRequest?.Client;
             if (client == null) throw new ArgumentNullException(nameof(validationResult.ValidatedRequest.Client));
 
-            _logger.LogDebug("Creating response for anonnymous authorization request");
+            _logger.LogDebug("Creating response for anonymous authorization request");
             var response = new AuthorizationResponse();
 
             var verificationCode = await _handleGenerationService.GenerateAsync();
-            _logger.LogDebug($"anonnymous-code was generated valued: {verificationCode}");
+            _logger.LogDebug($"anonymous-code was generated valued: {verificationCode}");
             response.VerificationCode = verificationCode;
             // generate activation URIs
             response.VerificationUri = _options.VerificationUri;
@@ -67,18 +67,18 @@ namespace IdentityServer4.Anonnymous.Services.Generators
 
             // lifetime
             response.Lifetime = client.TryGetIntPropertyOrDefault(_options.LifetimePropertyName, _options.DefaultLifetime);
-            _logger.LogDebug($"anonnymous lifetime was set to {response.Lifetime}");
+            _logger.LogDebug($"anonymous lifetime was set to {response.Lifetime}");
 
             // interval
             response.Interval = _options.Interval;
-            _logger.LogDebug($"anonnymous interval was set to {response.Interval}");
+            _logger.LogDebug($"anonymous interval was set to {response.Interval}");
 
             //allowed retries
             var allowedRetries = client.TryGetIntPropertyOrDefault(_options.AllowedRetriesPropertyName, _options.AllowedRetries);
             _logger.LogDebug($"Max allowed retries was set to {allowedRetries}");
 
             var userCode = await GenerateUserCodeAsync(client.UserCodeType ?? _options.DefaultUserCodeType);
-            var ac = new AnonnymousCodeInfo
+            var ac = new AnonymousCodeInfo
             {
                 AllowedRetries = allowedRetries,
                 ClientId = client.ClientId,
@@ -91,8 +91,8 @@ namespace IdentityServer4.Anonnymous.Services.Generators
                 Transport = validatedRequest.Transport,
                 VerificationCode = response.VerificationCode,
             };
-            _logger.LogDebug($"storing anonnymous-code in database: {ac.ToJsonString()}");
-            _ = _codeStore.StoreAnonnymousCodeInfoAsync(response.VerificationCode, ac);
+            _logger.LogDebug($"storing anonymous-code in database: {ac.ToJsonString()}");
+            _ = _codeStore.StoreAnonymousCodeInfoAsync(response.VerificationCode, ac);
 
             _logger.LogDebug("Send code via transports");
             var codeContext = new UserCodeTransportContext
@@ -139,7 +139,7 @@ namespace IdentityServer4.Anonnymous.Services.Generators
                     return userCode;
                 retryCount++;
             }
-            throw new InvalidOperationException("Unable to create unique user-code for anonnymous flow");
+            throw new InvalidOperationException("Unable to create unique user-code for anonymous flow");
         }
     }
 

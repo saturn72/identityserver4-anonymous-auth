@@ -4,7 +4,7 @@ using Shouldly;
 using System;
 using Xunit;
 
-namespace IdentityServer4.Anonnymous.Tests.Extensions
+namespace IdentityServer4.Anonymous.Tests.Extensions
 {
     public class HttpRequestExtensionsTests
     {

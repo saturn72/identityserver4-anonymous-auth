@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace IdentityServer4.Anonnymous.Logging
+namespace IdentityServer4.Anonymous.Logging
 {
     internal static class LogSerializer
     {

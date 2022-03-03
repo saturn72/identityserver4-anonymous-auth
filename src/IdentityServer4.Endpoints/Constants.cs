@@ -1,10 +1,10 @@
-namespace IdentityServer4.Anonnymous
+namespace IdentityServer4.Anonymous
 {
     public class Constants
     {
-        public const string AnonnymousFlowEventCategory = "Anonnymous";
-        public const string AnonnymousGrantType = "anonnymous";
-        public const string AnonnymousAuthenticationType = "anonnymous";
+        public const string AnonymousFlowEventCategory = "Anonymous";
+        public const string AnonymousGrantType = "anonymous";
+        public const string AnonymousAuthenticationType = "anonymous";
         public class FormParameters
         {
             public const string Transport = "transport";
@@ -37,23 +37,23 @@ namespace IdentityServer4.Anonnymous
         }
         public sealed class EndpointNames
         {
-            public const string AnonnymousAuthorization = "anonnymous_endpoint";
+            public const string AnonymousAuthorization = "anonymous_endpoint";
         }
         public sealed class EndpointPaths
         {
-            public const string AuthorizationEndpoint = "/connect/anonnymous";
-            public const string VerificationUri = "/anonnymous/verify";
+            public const string AuthorizationEndpoint = "/connect/anonymous";
+            public const string VerificationUri = "/anonymous/verify";
         }
 
         public sealed class Events
         {
-            private const int AnonnymousEventsStart = 10000;
-            public const int AuthorizationSuccessEventId = AnonnymousEventsStart + 0;
-            public const int AuthorizationFailureEventId = AnonnymousEventsStart + 1;
-            public const string GrantSuccessEventName = "anonnymous-grant-success";
-            public const int GrantSuccessEventId = AnonnymousEventsStart + 10;
-            public const string GrantFailedEventName = "anonnymous-grant-failed";
-            public const int GrantFailedEventId = AnonnymousEventsStart + 11;
+            private const int AnonymousEventsStart = 10000;
+            public const int AuthorizationSuccessEventId = AnonymousEventsStart + 0;
+            public const int AuthorizationFailureEventId = AnonymousEventsStart + 1;
+            public const string GrantSuccessEventName = "anonymous-grant-success";
+            public const int GrantSuccessEventId = AnonymousEventsStart + 10;
+            public const string GrantFailedEventName = "anonymous-grant-failed";
+            public const int GrantFailedEventId = AnonymousEventsStart + 11;
         }
         public sealed class UserInteraction
         {
@@ -64,7 +64,6 @@ namespace IdentityServer4.Anonnymous
         {
             public const string Sms = "sms";
             public const string Email = "email";
-
         }
     }
 }

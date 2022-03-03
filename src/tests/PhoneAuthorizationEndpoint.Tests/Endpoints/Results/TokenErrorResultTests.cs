@@ -1,10 +1,10 @@
-﻿using IdentityServer4.Anonnymous.Endpoints.Results;
+﻿using IdentityServer4.Anonymous.Endpoints.Results;
 using IdentityServer4.ResponseHandling;
 using Shouldly;
 using System;
 using Xunit;
 
-namespace Identityserver4.Anonnymous.Tests.Endpoints.Results
+namespace Identityserver4.Anonymous.Tests.Endpoints.Results
 {
     public class TokenErrorResultTests
     {

@@ -1,9 +1,9 @@
-﻿using IdentityServer4.Anonnymous.Services.Generators;
+﻿using IdentityServer4.Anonymous.Services.Generators;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace IdentityServer4.Anonnymous.Tests.Services.Generators
+namespace IdentityServer4.Anonymous.Tests.Services.Generators
 {
     public class DynamicNumericUserCodeGeneratorTests
     {

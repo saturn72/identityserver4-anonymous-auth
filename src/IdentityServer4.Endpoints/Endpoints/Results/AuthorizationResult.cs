@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using System;
-using IdentityServer4.Anonnymous.Services.Generators;
+using IdentityServer4.Anonymous.Services.Generators;
 
-namespace IdentityServer4.Anonnymous.Endpoints.Results
+namespace IdentityServer4.Anonymous.Endpoints.Results
 {
     public class AuthorizationResult : IEndpointResult
     {

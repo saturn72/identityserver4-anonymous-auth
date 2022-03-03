@@ -1,4 +1,4 @@
-﻿using IdentityServer4.Anonnymous.Transport;
+﻿using IdentityServer4.Anonymous.Transport;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;

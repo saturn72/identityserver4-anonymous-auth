@@ -1,25 +1,30 @@
 ﻿
-using IdentityServer4.Anonnymous.Stores;
+using IdentityServer4.Anonymous.Stores;
 using Shouldly;
 using Xunit;
 
-namespace IdentityServer4.Anonnymous.Tests.Stores
+namespace IdentityServer4.Anonymous.Tests.Stores
 {
     public class SqlScriptsTests
     {
-        public class AnonnymousCodeScriptsTests
+        public class AnonymousCodeScriptsTests
         {
             [Fact]
             public void ALL()
             {
-                SqlScripts.AnonnymousCodeScripts.SelectByUserCode.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonnymousCodeInfos] WHERE [UserCode] = @UserCode");
-                SqlScripts.AnonnymousCodeScripts.SelectByUserCodeExcludeExpiredAndVerified.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonnymousCodeInfos] WHERE [UserCode] = @UserCode AND [ExpiresOnUtc] > SYSUTCDATETIME() AND [VerifiedOnUtc] IS NULL AND [RetryCounter] < [AllowedRetries]");
-                SqlScripts.AnonnymousCodeScripts.SelectByVerificationCodeAndUserCode.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonnymousCodeInfos] WHERE [UserCode] = @UserCode AND [VerificationCode] = @VerificationCode");
-                SqlScripts.AnonnymousCodeScripts.SelectByVerificationAndUserCodeExcludeExpiredAndVerified.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonnymousCodeInfos] WHERE [UserCode] = @UserCode AND [VerificationCode] = @VerificationCode AND [ExpiresOnUtc] > SYSUTCDATETIME() AND [VerifiedOnUtc] IS NULL AND [RetryCounter] < [AllowedRetries]");
-                SqlScripts.AnonnymousCodeScripts.SelectByVeridicationCode.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonnymousCodeInfos] WHERE [VerificationCode] = @VerificationCode");
-                SqlScripts.AnonnymousCodeScripts.SelectByVerificationCodeExcludeExpiredAndVerified.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonnymousCodeInfos] WHERE [VerificationCode] = @VerificationCode AND [ExpiresOnUtc] > SYSUTCDATETIME() AND [VerifiedOnUtc] IS NULL AND [RetryCounter] < [AllowedRetries]");
-                SqlScripts.AnonnymousCodeScripts.InsertCommand.ShouldBe("INSERT INTO [AnonnymousCodeInfos] ([AllowedRetries], [VerificationCode], ClientId, Description, ExpiresOnUtc, Lifetime, RequestedScopes, ReturnUrl, Transport, UserCode) VALUES (@AllowedRetries, @VerificationCode, @ClientId, @Description, @ExpiresOnUtc, @Lifetime, @RequestedScopes, @ReturnUrl, @Transport, @UserCode)");
-                SqlScripts.AnonnymousCodeScripts.UpdateVerificationRetry.ShouldBe("UPDATE [AnonnymousCodeInfos] SET [RetryCounter] = [RetryCounter] + 1 WHERE [VerificationCode] = @VerificationCode");
+                SqlScripts.AnonymousCodeScripts.SelectByUserCode.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonymousCodeInfos] WHERE [UserCode] = @UserCode");
+                SqlScripts.AnonymousCodeScripts.SelectByUserCodeExcludeExpiredAndVerified.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonymousCodeInfos] WHERE [UserCode] = @UserCode AND [ExpiresOnUtc] > SYSUTCDATETIME() AND [VerifiedOnUtc] IS NULL AND [RetryCounter] < [AllowedRetries]");
+                SqlScripts.AnonymousCodeScripts.SelectByVerificationCodeAndUserCode.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonymousCodeInfos] WHERE [UserCode] = @UserCode AND [VerificationCode] = @VerificationCode");
+                SqlScripts.AnonymousCodeScripts.SelectByVerificationAndUserCodeExcludeExpiredAndVerified.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonymousCodeInfos] WHERE [UserCode] = @UserCode AND [VerificationCode] = @VerificationCode AND [ExpiresOnUtc] > SYSUTCDATETIME() AND [VerifiedOnUtc] IS NULL AND [RetryCounter] < [AllowedRetries]");
+                SqlScripts.AnonymousCodeScripts.SelectByVeridicationCode.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonymousCodeInfos] WHERE [VerificationCode] = @VerificationCode");
+                SqlScripts.AnonymousCodeScripts.SelectByVerificationCodeExcludeExpiredAndVerified.ShouldBe("SELECT [Id], [AllowedRetries], [AuthorizedScopes], [ClientId], [Description], [RequestedScopes], [ReturnUrl], [Transport] FROM [AnonymousCodeInfos] WHERE [VerificationCode] = @VerificationCode AND [ExpiresOnUtc] > SYSUTCDATETIME() AND [VerifiedOnUtc] IS NULL AND [RetryCounter] < [AllowedRetries]");
+                SqlScripts.AnonymousCodeScripts.InsertCommand.ShouldBe("INSERT INTO [AnonymousCodeInfos] ([AllowedRetries], [VerificationCode], ClientId, Description, ExpiresOnUtc, Lifetime, RequestedScopes, ReturnUrl, Transport, UserCode) VALUES (@AllowedRetries, @VerificationCode, @ClientId, @Description, @ExpiresOnUtc, @Lifetime, @RequestedScopes, @ReturnUrl, @Transport, @UserCode)");
+                SqlScripts.AnonymousCodeScripts.UpdateVerificationRetry.ShouldBe("UPDATE [AnonymousCodeInfos] SET [RetryCounter] = [RetryCounter] + 1 WHERE [VerificationCode] = @VerificationCode");
+
+                SqlScripts.AnonymousCodeScripts.SelectSubjectByClientId.ShouldBe("SELECT [Subject] FROM [AnonymousCodeInfos] WHERE [ClientId] = @ClientId AND [Subject] != NULL");
+
+                SqlScripts.AnonymousCodeScripts.UpdateAuthorization.ShouldBe("UPDATE [AnonymousCodeInfos] SET [Claims] = @[Claims], [IsAuthorized] = 1, [Subject] = @[Subject] WHERE [VerificationCode] = @VerificationCode");
+
             }
         }
     }

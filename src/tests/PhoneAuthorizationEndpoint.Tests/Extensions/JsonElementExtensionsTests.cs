@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Xunit;
 
-namespace Identityserver4.Anonnymous.Tests.Extensions
+namespace Identityserver4.Anonymous.Tests.Extensions
 {
     public class JsonElementExtensionsTests
     {

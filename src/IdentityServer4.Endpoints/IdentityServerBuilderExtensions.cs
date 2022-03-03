@@ -1,42 +1,42 @@
-using IdentityServer4.Anonnymous;
-using IdentityServer4.Anonnymous.Services;
-using IdentityServer4.Anonnymous.Services.Generators;
+using IdentityServer4.Anonymous;
+using IdentityServer4.Anonymous.Services;
+using IdentityServer4.Anonymous.Services.Generators;
 using IdentityServer4.Services;
 using System;
 using Microsoft.Extensions.Configuration;
-using IdentityServer4.Anonnymous.Stores;
+using IdentityServer4.Anonymous.Stores;
 using System.Data.SqlClient;
-using IdentityServer4.Anonnymous.Endpoints;
+using IdentityServer4.Anonymous.Endpoints;
 using System.Data;
-using IdentityServer4.Anonnymous.Validation;
+using IdentityServer4.Anonymous.Validation;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IdentityServerBuilderExtensions
     {
-        public static IIdentityServerBuilder AddAnonnymousAuthorization(
+        public static IIdentityServerBuilder AddAnonymousAuthorization(
             this IIdentityServerBuilder builder,
             IConfiguration configuration,
             string connectionString)
         {
-            builder.AddExtensionGrantValidator<AnonnymousExtensionGrantValidator>();
-            builder.AddEndpoint<AnonnymousAuthorizationEndpoint>(
-                Constants.EndpointNames.AnonnymousAuthorization,
+            builder.AddExtensionGrantValidator<AnonymousExtensionGrantValidator>();
+            builder.AddEndpoint<AnonymousAuthorizationEndpoint>(
+                Constants.EndpointNames.AnonymousAuthorization,
                 Constants.EndpointPaths.AuthorizationEndpoint.EnsureLeadingSlash());
 
             var services = builder.Services;
-            services.AddTransient<IAnonnymousAuthorizationRequestValidator, AnonnymousAuthorizationRequestValidator>();
+            services.AddTransient<IAnonymousAuthorizationRequestValidator, AnonymousAuthorizationRequestValidator>();
             services.AddTransient<IAuthorizationResponseGenerator, AuthorizationResponseGenerator>();
-            services.AddTransient<IAnonnymousCodeValidator, AnonnymousCodeValidator>();
+            services.AddTransient<IAnonymousCodeValidator, AnonymousCodeValidator>();
             services.AddSingleton<IUserCodeGenerator>(sp => new DynamicNumericUserCodeGenerator(Defaults.CodeGenetar.NumberOfFigures, Defaults.CodeGenetar.UserCodeType));
-            services.AddOptions<AnonnymousAuthorizationOptions>()
-                .Bind(configuration.GetSection(AnonnymousAuthorizationOptions.Section))
-                .Validate(AnonnymousAuthorizationOptions.Validate);
+            services.AddOptions<AnonymousAuthorizationOptions>()
+                .Bind(configuration.GetSection(AnonymousAuthorizationOptions.Section))
+                .Validate(AnonymousAuthorizationOptions.Validate);
             services.AddScoped<Func<IDbConnection>>(sp => () => new SqlConnection(connectionString));
-            services.AddScoped<IAnnonymousCodeStore, DefaultAnnonymousCodeStore>();
+            services.AddScoped<IAnonymousCodeStore, DefaultAnonymousCodeStore>();
 
             services.AddScoped<IRandomStringGenerator, DefaultRandomStringGenerator>();
-            services.AddScoped<IAnonnymousFlowInteractionService, DefaltAnonnymousFlowInteractionService>();
+            services.AddScoped<IAnonymousFlowInteractionService, DefaltAnonymousFlowInteractionService>();
             return builder;
         }
     }

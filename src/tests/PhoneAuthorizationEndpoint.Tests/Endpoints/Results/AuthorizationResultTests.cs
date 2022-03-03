@@ -1,9 +1,9 @@
-﻿using IdentityServer4.Anonnymous.Endpoints.Results;
+﻿using IdentityServer4.Anonymous.Endpoints.Results;
 using Shouldly;
 using System;
 using Xunit;
 
-namespace Identityserver4.Anonnymous.Tests.Endpoints.Results
+namespace Identityserver4.Anonymous.Tests.Endpoints.Results
 {
     public class AuthorizationResultTests
     {

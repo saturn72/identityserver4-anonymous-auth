@@ -1,4 +1,4 @@
-﻿namespace IdentityServer4.Anonnymous.UI.Models
+﻿namespace IdentityServer4.Anonymous.UI.Models
 {
     public record UserCodeCaptureViewModel
     {

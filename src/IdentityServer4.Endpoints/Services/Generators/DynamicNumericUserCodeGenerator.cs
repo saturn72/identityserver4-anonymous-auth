@@ -3,7 +3,7 @@ using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonnymous.Services.Generators
+namespace IdentityServer4.Anonymous.Services.Generators
 {
     public class DynamicNumericUserCodeGenerator : IUserCodeGenerator
     {
