@@ -16,7 +16,8 @@ namespace IdentityServer4.Anonymous.Stores
                 $"[{nameof(AnonymousCodeDbModel.Description)}], " +
                 $"[{nameof(AnonymousCodeDbModel.RequestedScopes)}], " +
                 $"[{nameof(AnonymousCodeDbModel.ReturnUrl)}], " +
-                $"[{nameof(AnonymousCodeDbModel.Transport)}] " +
+                $"[{nameof(AnonymousCodeDbModel.Transport)}], " +
+                $"[{nameof(AnonymousCodeDbModel.VerificationCode)}] " +
                 $"FROM [{TableName}]";
 
             public static readonly string SelectByUserCode = SelectSingleBase + $" WHERE [{nameof(AnonymousCodeDbModel.UserCode)}] = @{nameof(AnonymousCodeDbModel.UserCode)}";
@@ -39,6 +40,7 @@ namespace IdentityServer4.Anonymous.Stores
 
             public static readonly string SelectByVerificationCodeExcludeExpiredAndVerified = SelectByVeridicationCode +
                 $" AND [{nameof(AnonymousCodeDbModel.ExpiresOnUtc)}] > SYSUTCDATETIME()" +
+                $" AND [{nameof(AnonymousCodeDbModel.IsAuthorized)}] = 0" +
                 $" AND [{nameof(AnonymousCodeDbModel.VerifiedOnUtc)}] IS NULL" +
                 $" AND [{nameof(AnonymousCodeDbModel.RetryCounter)}] < [{nameof(AnonymousCodeDbModel.AllowedRetries)}]";
 
@@ -74,9 +76,9 @@ namespace IdentityServer4.Anonymous.Stores
                 $" WHERE [{nameof(AnonymousCodeDbModel.ClientId)}] = @{nameof(AnonymousCodeDbModel.ClientId)} AND [{nameof(AnonymousCodeDbModel.Subject)}] != NULL";
 
             public static readonly string UpdateAuthorization = $"UPDATE [{TableName}] SET " +
-                $"[{nameof(AnonymousCodeDbModel.Claims)}] = @[{nameof(AnonymousCodeDbModel.Claims)}], " +
+                $"[{nameof(AnonymousCodeDbModel.Claims)}] = @{nameof(AnonymousCodeDbModel.Claims)}, " +
                 $"[{nameof(AnonymousCodeDbModel.IsAuthorized)}] = 1, " +
-                $"[{nameof(AnonymousCodeDbModel.Subject)}] = @[{nameof(AnonymousCodeDbModel.Subject)}] " +
+                $"[{nameof(AnonymousCodeDbModel.Subject)}] = @{nameof(AnonymousCodeDbModel.Subject)} " +
                 $"WHERE [{nameof(AnonymousCodeDbModel.VerificationCode)}] = @{nameof(AnonymousCodeDbModel.VerificationCode)}";
         }
     }

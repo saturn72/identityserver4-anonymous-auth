@@ -48,7 +48,7 @@ namespace Identityserver4.Anonymous.Tests.Controllers
                 }
             };
             var res = await ctrl.Index();
-            res.ShouldBeOfType<ViewResult>().ViewName.ShouldBe("BadOrMissingDataError");
+            res.ShouldBeOfType<ViewResult>().ViewName.ShouldBe("Error");
         }
         [Fact]
         public async Task Index_NoMatchingEntryForVerificationCode_ReturnsView()
@@ -66,7 +66,7 @@ namespace Identityserver4.Anonymous.Tests.Controllers
                 }
             };
             var res = await ctrl.Index();
-            res.ShouldBeOfType<ViewResult>().ViewName.ShouldBe("BadOrMissingDataError");
+            res.ShouldBeOfType<ViewResult>().ViewName.ShouldBe("Error");
             cs.Verify(c => c.FindByVerificationCodeAsync(It.IsAny<string>(), It.Is<bool>(b => !b)), Times.Once);
         }
         [Fact]

@@ -37,11 +37,11 @@ namespace IdentityServer4.Anonymous.UI.Controllers
             var verificationCode = Request.Query[Constants.UserInteraction.VerificationCode];
 
             if (string.IsNullOrWhiteSpace(verificationCode))
-                return View("BadOrMissingDataError");
+                return View("Error");
 
             var entry = await _codeStore.FindByVerificationCodeAsync(verificationCode, false);
             if (entry == default)
-                return View("BadOrMissingDataError");
+                return View("Error");
 
             var model = new UserCodeCaptureViewModel
             {

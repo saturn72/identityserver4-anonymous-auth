@@ -93,19 +93,19 @@ namespace IdentityServer4.Anonymous.Stores
             using var con = _createDbConnection();
             return await con.QueryAsync<string>(query, new { clientId });
         }
-        public async Task UpdateAuthorization(AnonymousCodeInfo code)
+        public async Task PrepareForAuthorizationUpdate(AnonymousCodeInfo code)
         {
-            _logger.LogInformation($"Start {nameof(UpdateAuthorization)}");
+            _logger.LogInformation($"Start {nameof(PrepareForAuthorizationUpdate)}");
             if (code == default || code.Claims.IsNullOrEmpty())
             {
                 _logger.LogDebug("Invlaid data: {code}: ", code);
                 return;
             }
-            var claims = code.Claims.Select(x => new { type = x.Type, @value = x.Value });
+            var claims = JsonSerializer.Serialize(code.Claims.Select(x => new { type = x.Type, @value = x.Value }));
             var prms = new
             {
-                VerificationCode = code.VerificationCode.Sha256(),
-                Claims = code.Claims.ToJsonString(),
+                code.VerificationCode,
+                Claims = claims,
                 code.Subject,
             };
 

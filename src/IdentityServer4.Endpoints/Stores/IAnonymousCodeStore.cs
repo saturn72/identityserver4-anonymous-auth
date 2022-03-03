@@ -12,6 +12,6 @@ namespace IdentityServer4.Anonymous.Stores
         Task StoreAnonymousCodeInfoAsync(string verificationCode, AnonymousCodeInfo data);
         Task UpdateVerificationRetryAsync(string verificationCode);
         Task<IEnumerable<string>> GetAllSubjectIdsByClientIdAsync(string clientId);
-        Task UpdateAuthorization(AnonymousCodeInfo code);
+        Task PrepareForAuthorizationUpdate(AnonymousCodeInfo code);
     }
 }

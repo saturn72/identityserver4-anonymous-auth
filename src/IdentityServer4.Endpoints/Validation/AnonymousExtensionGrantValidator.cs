@@ -72,7 +72,7 @@ namespace IdentityServer4.Anonymous.Validation
             var validationResult = await _anonymousCodeValidator.ValidateVerifiedPhoneCodeAsync(validationRequest);
             if (validationResult.IsError)
             {
-                Error(context, "Invalid Phone code");
+                Error(context, "Invalid User code");
                 return;
             }
 

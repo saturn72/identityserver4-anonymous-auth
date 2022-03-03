@@ -42,7 +42,7 @@ namespace IdentityServer4.Anonymous
         public sealed class EndpointPaths
         {
             public const string AuthorizationEndpoint = "/connect/anonymous";
-            public const string VerificationUri = "/anonymous/verify";
+            public const string VerificationUri = "/anonymous";
         }
 
         public sealed class Events

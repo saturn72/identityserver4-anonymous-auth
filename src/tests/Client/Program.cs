@@ -9,17 +9,14 @@ namespace Client
 {
     class Program
     {
-        private static IDiscoveryCache Cache = new DiscoveryCache("https://localhost:5001");
+        private const string ServerAddress = "https://localhost:5001/";
+        private static IDiscoveryCache Cache = new DiscoveryCache(ServerAddress);
 
         public static async Task Main()
         {
             Console.Title = "Console Anonymous Flow";
 
-            do
-            {
-                await Task.Delay(3000);
-                await Cache.GetAsync();
-            } while (Cache == default);
+            await Task.Delay(10000);
             var authorizeResponse = await RequestAuthorizationAsync();
             var tokenResponse = await RequestTokenAsync(authorizeResponse);
             Console.WriteLine(tokenResponse.AccessToken);
@@ -43,7 +40,7 @@ namespace Client
                 TransportData = "{\"phone\":\"+972542204119\"}",
                 State = "some-app-state",
                 Scope = "api1",
-                RedirectUri = "https://localhost:5001/",
+                RedirectUri = ServerAddress,
             };
 
             var client = new HttpClient();
@@ -59,7 +56,8 @@ namespace Client
             Console.WriteLine($"\nPress enter to launch browser ({response.VerificationUri})");
             Console.ReadLine();
 
-            Process.Start(new ProcessStartInfo(response.VerificationUri) { UseShellExecute = true });
+            var a = new Uri(new Uri(ServerAddress), response.VerificationUriComplete).ToString();
+            Process.Start(new ProcessStartInfo(a) { UseShellExecute = true });
             return response;
         }
 

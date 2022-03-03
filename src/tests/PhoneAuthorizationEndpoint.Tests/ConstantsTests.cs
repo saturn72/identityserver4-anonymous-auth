@@ -54,7 +54,7 @@ namespace IdentityServer4.Anonymous.Tests
         public void EndpointPaths_Tests()
         {
             Constants.EndpointPaths.AuthorizationEndpoint.ShouldBe("/connect/anonymous");
-            Constants.EndpointPaths.VerificationUri.ShouldBe("/anonymous/verify");
+            Constants.EndpointPaths.VerificationUri.ShouldBe("/anonymous");
         }
 
         [Fact]

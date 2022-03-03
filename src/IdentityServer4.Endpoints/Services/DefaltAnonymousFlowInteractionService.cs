@@ -47,7 +47,7 @@ namespace IdentityServer4.Anonymous.Services
 
             await UpdateForAuthorization(code, client);
 
-            _ = _codeInfos.UpdateAuthorization(code);
+            _ = _codeInfos.PrepareForAuthorizationUpdate(code);
             return new AnonymousInteractionResult();
         }
 
