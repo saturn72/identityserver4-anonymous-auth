@@ -29,7 +29,7 @@ namespace TestBackend
             Properties =
             {
                 {"lifetime", "600" },
-                {"transports", "[{\"name\":\"sms\", \"provider\":\"main-sms-provider\", \"config\":{\"key\":\"twilio\"}}]" },
+                {"transports", "[{\"name\":\"rabbitmq\", \"provider\":\"main-rabbitmq-provider\", \"config\":{\"key\":\"rabbitmq\"}},{\"name\":\"sms\", \"provider\":\"main-sms-provider\", \"config\":{\"key\":\"twilio\"}}]" },
                 {"allowed_retries", "200" },
             },
         }

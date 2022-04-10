@@ -23,10 +23,16 @@ namespace TwilioProviders
 
             if (a.Where(x => x.AccountSid.HasValue()).Count() != len)
                 throw new ArgumentException($"bad or missing config: {nameof(TwilioAccount.AccountSid)}");
+
             if (a.Where(x => x.AuthToken.HasValue()).Count() != len)
                 throw new ArgumentException($"bad or missing config: {nameof(TwilioAccount.AuthToken)}");
+
             if (a.Where(x => x.Phone.HasValue()).Count() != len)
                 throw new ArgumentException($"bad or missing config: {nameof(TwilioAccount.Phone)}");
+
+            if (options.Accounts.GroupBy(a => a.Provider).Count() != len)
+                throw new ArgumentException($"bad or missing config: {nameof(TwilioAccount.Provider)} (non-unique provider name)");
+
             if (a.Where(x => x.Provider.HasValue()).Count() != len)
                 throw new ArgumentException($"bad or missing config: {nameof(TwilioAccount.Provider)}");
 

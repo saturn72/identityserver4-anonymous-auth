@@ -35,8 +35,8 @@ namespace E2ETests
             {
                 Address = address,
                 ClientId = "mobile-app",
-                Transport = "sms",
-                Provider = "main-sms-provider",
+                Transport = "rabbitmq",
+                Provider = "main-rabbitmq-provider",
                 TransportData = "{\"phone\":\"+972542204119\"}",
                 State = "some-app-state",
                 Scope = "api1",
