@@ -45,13 +45,13 @@ namespace IdentityServer4.Anonymous.Services
             if (client == default)
                 return LogAndReturnError("Invalid client", "Anonymous authorization failure - requested client is invalid");
 
-            await UpdateForAuthorization(code, client);
+            await PrepareForAuthorizationUpdate(code, client);
 
-            _ = _codeInfos.PrepareForAuthorizationUpdate(code);
+            _ = _codeInfos.UpdateAuthorization(code);
             return new AnonymousInteractionResult();
         }
 
-        private async Task UpdateForAuthorization(AnonymousCodeInfo code, Client client)
+        private async Task PrepareForAuthorizationUpdate(AnonymousCodeInfo code, Client client)
         {
             string subject = "";
             if (!code.Id.Equals(default))
@@ -65,8 +65,11 @@ namespace IdentityServer4.Anonymous.Services
             var clientClaims = client.Claims.Select(c => new Claim(c.Type, c.Value));
             var claims = new List<Claim>(clientClaims)
             {
-                new Claim(JwtClaimTypes.Subject, subject)
+                new Claim(JwtClaimTypes.Subject, subject),
+                new Claim(JwtClaimTypes.IdentityProvider, code.Transport),
+                new Claim(JwtClaimTypes.AuthenticationMethod, code.Transport),
             };
+
             var ci = new ClaimsIdentity(claims, Constants.AnonymousAuthenticationType);
             var principal = new ClaimsPrincipal(ci);
 

@@ -27,7 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonymous.csproj" />
     <ProjectReference Include="..\..\IdentityServer4.Endpoints\IdentityServer4.Anonymous.csproj" />
-    <ProjectReference Include="..\TestBackend\TestBackend.csproj" />
+    <ProjectReference Include="..\TestBackend\IdentityServer.csproj" />
   </ItemGroup>
 
 </Project>

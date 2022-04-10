@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer4.Anonymous.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityModel.Anonymous", "IdentityModel.PhoneAuthorizationEndpoint\IdentityModel.Anonymous.csproj", "{1E70AEC9-4397-4815-94A0-ABA248DCFD3D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBackend", "tests\TestBackend\TestBackend.csproj", "{4C7F179D-7420-48B7-9888-99FFDE09E7EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer", "tests\TestBackend\IdentityServer.csproj", "{4C7F179D-7420-48B7-9888-99FFDE09E7EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migration", "Migration", "{D0EB8618-AF91-4D12-A42D-4CBCE29757E7}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,7 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwilioProviders", "Providers\Twilio\TwilioProviders.csproj", "{A20D19B0-41C1-4920-9980-B744D43C8F4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "tests\Client\Client.csproj", "{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "tests\Client\Client.csproj", "{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{B19EA225-D1DE-4AA5-8C2A-85B6C9C14619}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,10 @@ Global
 		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB2EB9A-03CD-4E74-B215-18CAB861DDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B19EA225-D1DE-4AA5-8C2A-85B6C9C14619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B19EA225-D1DE-4AA5-8C2A-85B6C9C14619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B19EA225-D1DE-4AA5-8C2A-85B6C9C14619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B19EA225-D1DE-4AA5-8C2A-85B6C9C14619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

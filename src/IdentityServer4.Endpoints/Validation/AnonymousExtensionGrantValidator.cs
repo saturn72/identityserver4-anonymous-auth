@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.Stores;
 
 namespace IdentityServer4.Anonymous.Validation
 {
@@ -15,60 +16,56 @@ namespace IdentityServer4.Anonymous.Validation
         private readonly ITokenValidator _tokenValidator;
         private readonly IAnonymousCodeStore _codeStore;
         private readonly IAnonymousCodeValidator _anonymousCodeValidator;
+        private readonly IClientStore _clients;
         private readonly ILogger<AnonymousExtensionGrantValidator> _logger;
 
         public AnonymousExtensionGrantValidator(
             ITokenValidator validator,
             IAnonymousCodeStore codeStore,
             IAnonymousCodeValidator anonymousCodeValidator,
+            IClientStore clients,
             ILogger<AnonymousExtensionGrantValidator> logger)
         {
             _tokenValidator = validator;
             _codeStore = codeStore;
             _anonymousCodeValidator = anonymousCodeValidator;
             _logger = logger;
+            _clients = clients;
         }
 
         public string GrantType => Constants.AnonymousGrantType;
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
             _logger.LogInformation($"Start Extension grant validation for {GrantType}");
-            var token = context.Request.Raw.Get("token");
-            if (!token.HasValue())
-            {
-                Error(context, "Invalid token");
-                return;
-            }
-            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
-            if (tokenValidationResult.IsError)
-            {
-                Error(context, "Invalid token");
-                return;
-            }
 
-            var code = context.Request.Raw.Get("user_code");
+            var code = context.Request.Raw.Get(Constants.UserInteraction.VerificationCode);
             if (!code.HasValue())
             {
                 Error(context, "Invalid User code");
                 return;
             }
-            string amr;
-            if (tokenValidationResult.Claims.IsNullOrEmpty() ||
-                !(amr = tokenValidationResult.Claims.GetFirstValueOrDefault(JwtClaimTypes.AuthenticationMethod)).HasValue())
-            {
-                Error(context, "Invalid user amr");
-                return;
-            }
 
-            var subject = Principal.Create(amr, tokenValidationResult.Claims.ToArray());
+            string amr;
             var ac = await _codeStore.FindByVerificationCodeAsync(code, false);
-            if (ac == default)
+            if (ac == default ||
+                !ac.IsAuthorized ||
+                ac.Claims.IsNullOrEmpty() ||
+            !(amr = ac.Claims.GetFirstValueOrDefault(JwtClaimTypes.AuthenticationMethod)).HasValue())
             {
                 Error(context, $"Failed to fetch verification code using \'code\' = {code}");
                 return;
             }
-            //validate Phone code
-            var validationRequest = new AnonymousCodeValidationRequest(ac, tokenValidationResult.Client, subject);
+
+            var subject = Principal.Create(amr, ac.Claims.ToArray());
+
+            var client = await _clients.FindClientByIdAsync(ac.ClientId);
+            if (client == default)
+            {
+                Error(context, $"Failed to fetch client for \'code\' = {code}");
+                return;
+            }
+            //validate code
+            var validationRequest = new AnonymousCodeValidationRequest(ac, client, subject);
             var validationResult = await _anonymousCodeValidator.ValidateVerifiedPhoneCodeAsync(validationRequest);
             if (validationResult.IsError)
             {
@@ -77,14 +74,16 @@ namespace IdentityServer4.Anonymous.Validation
             }
 
             var am = $"{amr} {ac.Transport}";
-            var provider = tokenValidationResult.Claims.GetFirstValueOrDefault(JwtClaimTypes.IdentityProvider);
-            var subjectId = tokenValidationResult.Claims.GetFirstValueOrDefault(JwtClaimTypes.Subject);
+            var provider = ac.Claims.GetFirstValueOrDefault(JwtClaimTypes.IdentityProvider) ??
+                throw new ArgumentNullException(JwtClaimTypes.IdentityProvider);
+            var subjectId = ac.Subject ??
+                throw new ArgumentNullException(nameof(AnonymousCodeInfo.Subject));
 
             context.Result = new GrantValidationResult(
                 identityProvider: provider,
                 subject: subjectId,
-                authenticationMethod: am
-                //claims: result.Claims, ==> get user claims here
+                authenticationMethod: am,
+                claims: ac.Claims
                 );
             return;
         }

@@ -93,9 +93,9 @@ namespace IdentityServer4.Anonymous.Stores
             using var con = _createDbConnection();
             return await con.QueryAsync<string>(query, new { clientId });
         }
-        public async Task PrepareForAuthorizationUpdate(AnonymousCodeInfo code)
+        public async Task UpdateAuthorization(AnonymousCodeInfo code)
         {
-            _logger.LogInformation($"Start {nameof(PrepareForAuthorizationUpdate)}");
+            _logger.LogInformation($"Start {nameof(UpdateAuthorization)}");
             if (code == default || code.Claims.IsNullOrEmpty())
             {
                 _logger.LogDebug("Invlaid data: {code}: ", code);

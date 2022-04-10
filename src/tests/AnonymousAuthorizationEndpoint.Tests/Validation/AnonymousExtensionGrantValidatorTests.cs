@@ -19,14 +19,14 @@ namespace IdentityServer4.Anonymous.Tests.Validation
         [Fact]
         public void GrantTypeValue()
         {
-            new AnonymousExtensionGrantValidator(default, default, default, default).GrantType.ShouldBe("anonymous");
+            new AnonymousExtensionGrantValidator(default, default, default, default, default).GrantType.ShouldBe("anonymous");
         }
         [Theory]
         [MemberData(nameof(ValidateAsync_Error_OnNulls_DATA))]
         public async Task ValidateAsync_Error_OnNulls(ExtensionGrantValidationContext context)
         {
             var log = new Mock<ILogger<AnonymousExtensionGrantValidator>>();
-            var v = new AnonymousExtensionGrantValidator(default, default, default, log.Object);
+            var v = new AnonymousExtensionGrantValidator(default, default, default, default, log.Object);
             await Should.ThrowAsync<NullReferenceException>(() => v.ValidateAsync(context));
         }
 
@@ -41,7 +41,7 @@ namespace IdentityServer4.Anonymous.Tests.Validation
         public async Task ValidateAsync_Error_OnMissingToken(ExtensionGrantValidationContext context)
         {
             var log = new Mock<ILogger<AnonymousExtensionGrantValidator>>();
-            var v = new AnonymousExtensionGrantValidator(default, default, default, log.Object);
+            var v = new AnonymousExtensionGrantValidator(default, default, default, default, log.Object);
             await v.ValidateAsync(context);
             context.Result.IsError.ShouldBeTrue();
         }
@@ -94,7 +94,7 @@ namespace IdentityServer4.Anonymous.Tests.Validation
             tv.Setup(t => t.ValidateAccessTokenAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new TokenValidationResult { IsError = true });
 
-            var v = new AnonymousExtensionGrantValidator(tv.Object, default, default, log.Object);
+            var v = new AnonymousExtensionGrantValidator(tv.Object, default, default, default, log.Object);
             await v.ValidateAsync(context);
             context.Result.IsError.ShouldBeTrue();
         }
@@ -107,7 +107,7 @@ namespace IdentityServer4.Anonymous.Tests.Validation
             tv.Setup(t => t.ValidateAccessTokenAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new TokenValidationResult { IsError = false });
 
-            var v = new AnonymousExtensionGrantValidator(tv.Object, default, default, log.Object);
+            var v = new AnonymousExtensionGrantValidator(tv.Object, default, default, default, log.Object);
             await v.ValidateAsync(context);
             context.Result.IsError.ShouldBeTrue();
         }
@@ -175,7 +175,7 @@ namespace IdentityServer4.Anonymous.Tests.Validation
             tv.Setup(t => t.ValidateAccessTokenAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(new TokenValidationResult { IsError = false, Claims = claims });
 
-            var v = new AnonymousExtensionGrantValidator(tv.Object, default, default, log.Object);
+            var v = new AnonymousExtensionGrantValidator(tv.Object, default, default, default, log.Object);
             await v.ValidateAsync(context);
             context.Result.IsError.ShouldBeTrue();
         }
@@ -208,7 +208,7 @@ namespace IdentityServer4.Anonymous.Tests.Validation
 
             var cs = new Mock<IAnonymousCodeStore>();
             cs.Setup(c => c.FindByVerificationCodeAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(default(AnonymousCodeInfo));
-            var v = new AnonymousExtensionGrantValidator(tv.Object, cs.Object, default, log.Object);
+            var v = new AnonymousExtensionGrantValidator(tv.Object, cs.Object, default, default, log.Object);
             await v.ValidateAsync(context);
             context.Result.IsError.ShouldBeTrue();
         }
