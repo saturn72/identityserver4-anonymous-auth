@@ -8,40 +8,6 @@ namespace RabbitMQ
         public const string Section = "RABBITMQ";
         public RabbitMQConnectionInfo[] Connections { get; set; }
         public int RetryCounter { get; set; } = 5;
-        public class RabbitMQConnectionInfo
-        {
-            private string _password;
-            private string _passwordInternal;
-            private string _username;
-            private string _usernameInternal;
-
-            public string Exchange { get; set; }
-            public string HostName { get; set; }
-            public string Password
-            {
-                get => _password;
-                set
-                {
-                    _password = value;
-                    _passwordInternal = _password + ":password";
-                }
-            }
-            public string PasswordInternal => _passwordInternal;
-            public int Port { get; set; }
-            public string Provider { get; set; }
-            public string RoutingKey { get; set; }
-            public string Type { get; set; }
-            public string Username
-            {
-                get => _username;
-                set
-                {
-                    _username = value;
-                    _usernameInternal = _username + ":username";
-                }
-            }
-            public string UsernameInternal => _usernameInternal;
-        }
         internal static bool Validate(RabbitMQOptions options)
         {
             var c = options.Connections;
@@ -52,8 +18,8 @@ namespace RabbitMQ
             if (c.Where(x => x.Exchange.HasValue()).Count() != len)
                 throw new ArgumentException($"bad or missing config: {nameof(RabbitMQConnectionInfo.Exchange)}");
 
-            if (c.Where(x => x.HostName.HasValue()).Count() != len)
-                throw new ArgumentException($"bad or missing config: {nameof(RabbitMQConnectionInfo.HostName)}");
+            if (c.Where(x => x.Host.HasValue()).Count() != len)
+                throw new ArgumentException($"bad or missing config: {nameof(RabbitMQConnectionInfo.Host)}");
 
             if (c.Where(x => x.Port <= 0).Any())
                 throw new ArgumentException($"bad or missing config: {nameof(RabbitMQConnectionInfo.Port)}");
@@ -76,7 +42,50 @@ namespace RabbitMQ
             if (c.Where(x => x.RoutingKey.HasValue()).Count() != len)
                 throw new ArgumentException($"bad or missing config: {nameof(RabbitMQConnectionInfo.RoutingKey)}");
 
+            var infoRetryCounters = c.Where(x => x.RetryCounter == default);
+            if (options.RetryCounter == 0 && infoRetryCounters.Count() == len)
+                throw new ArgumentException($"bad or missing config: {nameof(RabbitMQConnectionInfo.RetryCounter)} (no default value for retry counter)");
+
+            //set default value for retry counter
+            _ = infoRetryCounters.Select(x => x.RetryCounter = options.RetryCounter);
+
             return true;
+        }
+        public class RabbitMQConnectionInfo
+        {
+            private string _password;
+            private string _passwordInternal;
+            private string _username;
+            private string _usernameInternal;
+
+            public string Provider { get; set; }
+            public string Host { get; set; }
+            public int Port { get; set; }
+            public string Type { get; set; }
+            public string[] Endpoints { get; set; }
+            public string Exchange { get; set; }
+            public string RoutingKey { get; set; }
+            public int RetryCounter { get; set; } = 5;
+            public string Username
+            {
+                get => _username;
+                set
+                {
+                    _username = value;
+                    _usernameInternal = _username + ":username";
+                }
+            }
+            internal string UsernameInternal => _usernameInternal;
+            public string Password
+            {
+                get => _password;
+                set
+                {
+                    _password = value;
+                    _passwordInternal = _password + ":password";
+                }
+            }
+            internal string PasswordInternal => _passwordInternal;
         }
     }
 }

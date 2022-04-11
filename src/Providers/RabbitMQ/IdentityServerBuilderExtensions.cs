@@ -1,6 +1,8 @@
 ﻿using IdentityServer4.Anonymous.Transport;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using RabbitMQ;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -12,11 +14,15 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var services = builder.Services;
 
-            services.AddOptions<RabbitMQOptions>()
-                .Bind(configuration.GetSection(RabbitMQOptions.Section))
-                .Validate(RabbitMQOptions.Validate);
+
+            var section = configuration.GetSection(RabbitMQOptions.Section);
+            var options = new RabbitMQOptions();
+            section.Bind(options);
+            RabbitMQOptions.Validate(options);
+            _ = options.Connections.Select(ci => services.AddSingleton(sp => new RabbitMQPersistentConnection(ci, sp.GetService<ILogger<RabbitMQPersistentConnection>>()))).ToArray();
 
             services.AddScoped<ITransporter, RabbitMQTransport>();
+            services.AddSingleton<RabbitMQConnectionFactory>();
 
             return builder;
         }

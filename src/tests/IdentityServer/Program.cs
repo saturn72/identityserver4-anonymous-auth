@@ -21,7 +21,7 @@ namespace TestBackend
                 })
             .ConfigureAppConfiguration((context, config) =>
             {
-                config.AddJsonFile("appsettings.rabbitmq.json", optional: true, reloadOnChange: true);
+                config.AddJsonFile("appsettings.rabbitmq.json", optional: false, reloadOnChange: true);
                 config.AddJsonFile("appsettings.twilio.json", optional: false, reloadOnChange: true);
             });
     }

@@ -135,3 +135,4 @@ _ReSharper*/
 packages/
 
 appsettings.twilio.json
+appsettings.rabbitmq.json

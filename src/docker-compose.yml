@@ -1,8 +1,26 @@
 version: '3.4'
 
 services:
+  traefik:
+    image: traefik:v2.3
+    ports:
+      - "81:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
+
   identityserver:
     image: ${DOCKER_REGISTRY-}identityserver
     build:
       context: .
       dockerfile: tests/IdentityServer/Dockerfile
+    ports:
+      - 5010:80
+      - 5011:443
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.identity.rule=Host(`identity.localhost`)"
+      - "traefik.http.routers.identity.entrypoints=web"
+      - "traefik.http.services.identity.loadbalancer.server.port=5010"

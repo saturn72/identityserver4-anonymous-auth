@@ -21,5 +21,11 @@
     <ProjectReference Include="..\..\Providers\Twilio\TwilioProviders.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.rabbitmq.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
 </Project>

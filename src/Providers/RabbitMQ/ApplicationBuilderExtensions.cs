@@ -1,20 +1,23 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ;
+﻿using RabbitMQ;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System;
 
 namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
-        public static void InitRabbitMQProviders(this IApplicationBuilder app)
+        public static void Warmup(this IApplicationBuilder app)
         {
-            throw new System.NotImplementedException();
             var services = app.ApplicationServices;
-            var options = services.GetRequiredService<RabbitMQOptions>();
-            foreach (var c in options.Connections)
+            _ = services.GetService<IOptions<RabbitMQOptions>>().Value;
 
-            {
-
-            }
+            var connections = services.GetServices<RabbitMQPersistentConnection>();
+            //foreach (var c in connections)
+            //{
+            //    if (!c.TryConnect())
+            //        throw new InvalidOperationException("Failed to start rabbitmq connection. Check log for more details");
+            //}
         }
     }
 }

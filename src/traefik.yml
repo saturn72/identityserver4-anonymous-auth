@@ -1,0 +1,16 @@
+api:
+  dashboard: true
+  insecure: true
+
+providers:
+  docker:
+    exposedByDefault: false
+
+log:
+  level: DEBUG
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"

@@ -37,7 +37,7 @@ namespace RabbitMQ
             }
             var json = "json stroing";
 
-            var (success, error) = await _factory.TryPublish(context.Provider, json);
+            var (success, error) = _factory.TryPublish(context.Provider, json);
             if (!success)
                 _logger.LogError(error);
         }
